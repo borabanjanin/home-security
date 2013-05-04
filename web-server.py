@@ -13,7 +13,7 @@ import serial
 
 PORT = 8080
 
-class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def get_query_params_as_dict(self):
 		kv_tuples = parse_qsl(urlparse(self.path)[4])
 		result = {}    
@@ -44,11 +44,12 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		self.wfile.write(json.dumps(content))
 		self.wfile.close()
 
-class MyWebServer(SocketServer.TCPServer):
+
+class MyHTTPServer(SocketServer.TCPServer):
 	allow_reuse_address = True
 
 if __name__ == "__main__":
-	httpd = MyWebServer(('', PORT), MyWebHandler)
+	httpd = MyHTTPServer(('', PORT), MyHTTPHandler)
 	print('serving at port %d' % PORT)
 	try:
 		httpd.serve_forever()
