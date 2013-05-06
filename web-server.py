@@ -2,6 +2,8 @@
 
 import SocketServer
 import SimpleHTTPServer
+import BaseHTTPServer
+import CGIHTTPServer
 from urlparse import urlparse, parse_qsl
 from pprint import pprint
 
@@ -10,17 +12,18 @@ import os
 import re
 import subprocess
 import serial
+import cgi
+
 
 PORT = 8080
 
-class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class CGIHandeler(CGIHTTPServer.CGIHTTPRequestHandler):
 	def get_query_params_as_dict(self):
 		kv_tuples = parse_qsl(urlparse(self.path)[4])
 		result = {}    
 		for k, v in kv_tuples:
 			result[k] = v
 		return result
-
 
 	def do_POST(self):
 		self.send_response(200)
@@ -44,11 +47,17 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		self.wfile.write(json.dumps(content))
 		self.wfile.close()
 
-class MyWebServer(SocketServer.TCPServer):
+class CGIServer(SocketServer.TCPServer):
+	cgi_directories = [""]
 	allow_reuse_address = True
 
 if __name__ == "__main__":
-	httpd = MyWebServer(('', PORT), MyWebHandler)
+	#httpd = CGIServer(('', PORT), CGIHandeler)
+	server = BaseHTTPServer.HTTPServer
+	handler = CGIHTTPServer.CGIHTTPRequestHandler
+	server_address = ("", PORT)
+	handler.cgi_directories = ["/"]	
+	httpd = server(server_address, handler)
 	print('serving at port %d' % PORT)
 	try:
 		httpd.serve_forever()
