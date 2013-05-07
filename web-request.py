@@ -3,7 +3,7 @@
 import json
 import requests
 
-server = 'http://localhost:8080'
+server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
   }
