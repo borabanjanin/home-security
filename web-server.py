@@ -29,7 +29,7 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		post_data = json.loads(post_data_str)
 		
 		data = sql.pull_iden(0)
-		print data[2]
+
 		post_data["iden"] = data[0]
 		post_data["armed"] = data[1]
 		post_data["module_1"]["sensor_1"] = data[2]
