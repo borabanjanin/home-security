@@ -7,9 +7,16 @@ server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
   }
-data = {
-  'this': 'test',
-  }
+
+data =	{
+				"iden": "0",
+				"armed": "false",
+				"module_1": {
+					"sensor_1":"none",
+					"sensor_2":"none",
+					"sensor_3":"none"
+				}
+			}
 
 # see python-requests.org for more help
 
