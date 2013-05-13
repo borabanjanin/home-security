@@ -34,7 +34,10 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		sen3 = post_data["module_1"]["sensor_3"]
 		
 		data = sql.pull_iden(iden)
-		
+
+		data = sql.pull_iden(0)
+
+		post_data["iden"] = data[0]
 		post_data["armed"] = data[1]
 		post_data["alarm"] = data[2]
 
