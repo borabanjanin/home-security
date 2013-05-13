@@ -2,30 +2,50 @@
 
 import json
 import requests
+import jsondata as sql
+import time
+import serial
 
+run = True'
+mod_number = 0
 server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
   }
 
-data =	{
-				"iden": "0",
-				"armed": "false",
-				"module_1": {
-					"sensor_1":"none",
-					"sensor_2":"none",
-					"sensor_3":"none"
-				}
-			}
+data = sql.json_struct()
+port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=3.0)
+buf
 
-# see python-requests.org for more help
+def server_request():
+	response = requests.post('%s/endpoint' % server, data=json.dumps(data), headers=headers)
+	response_str = response.text
+	if response.status_code == requests.codes.OK:
+	  print('Response: HTTP %s' % response.status_code)
+	  print(json.dumps(json.loads(response_str), indent=2))
+	else:
+		print('Error: HTTP %s' % response.status_code)
+  		print(response_str)
 
-response = requests.post('%s/endpoint' % server, data=json.dumps(data), headers=headers)
+def read_port():
+	size = port.readinto(buf)
+	for i in range(size):
+		print buf[i]
+	return size
 
-response_str = response.text
-if response.status_code == requests.codes.OK:
-  print('Response: HTTP %s' % response.status_code)
-  print(json.dumps(json.loads(response_str), indent=2))
-else:
-  print('Error: HTTP %s' % response.status_code)
-  print(response_str)
+def parse_input(size):
+	for i in range(size):
+		if buf[i] == 'b':
+			port.write(mod_number)
+			mod_number = mod_number + 1
+		else:
+			print "data"
+
+while run == True:	
+	try:
+		#time.sleep(2)
+		server_request()
+		size = read_port()
+		parse_input(size)
+	except KeyboardInterrupt:
+		run = False

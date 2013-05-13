@@ -18,7 +18,7 @@ import jsondata as sql
 
 PORT = 8080
 sql.create_table()
-sql.create_module(0, 0, "none", "none", "none")
+sql.create_module("0", "false", "false", "none", "none", "none")
 
 class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def get_query_params_as_dict(self):
@@ -42,15 +42,9 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				%s
 				<form method="POST">
 				<input type="text" name="iden" />
-				<input type="submit" name="Go" />
 				<input type="text" name="armed" />
+				<input type="text" name="alarm" />
 				<input type="submit" name="Go" />
-				<input type="text" name="sensor1" />
-				<input type="submit" name="Go" />
-				<input type="text" name="sensor2" />
-				<input type="submit" name="Go" />
-				<input type="text" name="sensor3" />
-				<input type="submit" name="Go1" />
 				</form>
 			""" % self.path)
 			self.wfile.close()
@@ -69,10 +63,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 		iden = form['iden'].value
 		armed = form['armed'].value
-		sensor1 = form['sensor1'].value
-		sensor2 = form['sensor2'].value
-		sensor3 = form['sensor3'].value
-		sql.update_module(iden ,armed,sensor1,sensor2,sensor3)
+		alarm = form['alarm'].value
+		sql.user_server_update(iden, armed, alarm)
 #		self.wfile.write(form['his_name'].value)
 #		self.wfile.write(form['your_name'].value)
 		self.wfile.close()
@@ -89,6 +81,5 @@ if __name__ == "__main__":
 		print "running"
 	except KeyboardInterrupt:
 		print('bye')
-		sql.remove_table()
 		httpd.server_close()
 

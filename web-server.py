@@ -27,15 +27,18 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		content_len = int(self.headers.getheader('Content-Length'))
 		post_data_str = self.rfile.read(content_len)
 		post_data = json.loads(post_data_str)
-		
-		data = sql.pull_iden(0)
-		print data[2]
-		post_data["iden"] = data[0]
-		post_data["armed"] = data[1]
-		post_data["module_1"]["sensor_1"] = data[2]
-		post_data["module_1"]["sensor_2"] = data[3]
-		post_data["module_1"]["sensor_3"] = data[4]
 
+		iden =post_data["iden"]
+		sen1 = post_data["module_1"]["sensor_1"]
+		sen2 = post_data["module_1"]["sensor_2"]
+		sen3 = post_data["module_1"]["sensor_3"]
+		
+		data = sql.pull_iden(iden)
+		
+		post_data["armed"] = data[1]
+		post_data["alarm"] = data[2]
+
+		sql.web_server_update(iden, sen1, sen2, sen3)
 	
 		content = {
 			'path': self.path,
