@@ -15,18 +15,21 @@ def json_struct():
 		"module_1": {
 			"sensor_1":"light",
 			"sensor_2":"sound",
-			"sensor_3":"motion"
+			"sensor_3":"motion",
+			"config_1":"255",
+			"config_2":"255",
+			"config_3":"255",
 		}
 	}
 	
 	#data = json.loads(data)
 	return data
 
-def create_module(iden, armed, alarm, sen1, sen2, sen3):
+def create_module(iden, armed, alarm, sen1, sen2, sen3, config1, config2, config3):
 	con = sql.connect(DATABASE)
 	with con:
 		cur = con.cursor() 
-		query = "INSERT INTO Homesec VALUES('%s', '%s', '%s', '%s', '%s', '%s');" % (iden, armed, alarm, sen1, sen2, sen3)
+		query = "INSERT INTO Homesec VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');" % (iden, armed, alarm, sen1, sen2, sen3, config1, config2, config3)
 		cur.execute(query)
 
 def create_table():
@@ -34,9 +37,9 @@ def create_table():
 	with con:
 		cur = con.cursor()  
 		cur.execute("DROP TABLE IF EXISTS Homesec")
-		cur.execute("CREATE TABLE Homesec(iden TEXT, armed TEXT, alarm TEXT, sensor1 TEXT, sensor2 TEXT, sensor3 TEXT);")
+		cur.execute("CREATE TABLE Homesec(iden TEXT, armed TEXT, alarm TEXT, sensor1 TEXT, sensor2 TEXT, sensor3 TEXT, config1 TEXT, config2 TEXT, config3 TEXT);")
 
-def update_module(iden, armed, alarm, sen1, sen2, sen3):
+def update_module(iden, armed, alarm, sen1, sen2, sen3, config1, config2, config3):
 	con = sql.connect(DATABASE)
 	with con:
 		cur = con.cursor()
@@ -45,14 +48,20 @@ def update_module(iden, armed, alarm, sen1, sen2, sen3):
 		cur.execute("UPDATE Homesec SET sensor1=? WHERE iden=?",(sen1, iden))
 		cur.execute("UPDATE Homesec SET sensor2=? WHERE iden=?",(sen2, iden)) 
 		cur.execute("UPDATE Homesec SET sensor3=? WHERE iden=?",(sen3, iden))
+		cur.execute("UPDATE Homesec SET config1=? WHERE iden=?",(config1, iden))
+		cur.execute("UPDATE Homesec SET config2=? WHERE iden=?",(config2, iden)) 
+		cur.execute("UPDATE Homesec SET config3=? WHERE iden=?",(config3, iden))
 		con.commit()
 
-def user_server_update(iden, armed, alarm):
+def user_server_update(iden, armed, alarm, config1, config2, config3):
 	con = sql.connect(DATABASE)
 	with con:
 		cur = con.cursor()
 		cur.execute("UPDATE Homesec SET armed=? WHERE iden=?",(armed, iden))
 		cur.execute("UPDATE Homesec SET alarm=? WHERE iden=?",(alarm, iden))	
+		cur.execute("UPDATE Homesec SET armed=? WHERE iden=?",(config1, iden))
+		cur.execute("UPDATE Homesec SET alarm=? WHERE iden=?",(config2, iden))	
+		cur.execute("UPDATE Homesec SET armed=? WHERE iden=?",(config3, iden))
 		con.commit()
 
 def web_server_update(iden, sen1, sen2, sen3):
@@ -92,9 +101,9 @@ def remove_table():
 
 def test_database():
 	create_table()
-	create_module("0", "false", "false", "a", "b", "c")
-	create_module("1", "true", "false", "x", "y", "z")
-	update_module("0","true","true","d","e","f")
+	create_module("0", "false", "false", "a", "b", "c","125")
+	create_module("1", "true", "false", "x", "y", "z","125")
+	update_module("0","true","true","d","e","f","125")
 	row1 = pull_iden("0")
 	row2 = pull_iden("1")
 	rows = fetch_table()	

@@ -18,7 +18,7 @@ import jsondata as sql
 
 PORT = 8080
 sql.create_table()
-sql.create_module("0", "false", "false", "none", "none", "none")
+sql.create_module("0", "false", "false", "none", "none", "none", "255", "255", "255")
 
 class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def get_query_params_as_dict(self):
@@ -44,6 +44,9 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				<input type="text" name="iden" />
 				<input type="text" name="armed" />
 				<input type="text" name="alarm" />
+				<input type="text" name="config1" />
+				<input type="text" name="config2" />
+				<input type="text" name="config3" />
 				<input type="submit" name="Go" />
 				</form>
 			""" % self.path)
@@ -64,7 +67,10 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		iden = form['iden'].value
 		armed = form['armed'].value
 		alarm = form['alarm'].value
-		sql.user_server_update(iden, armed, alarm)
+		config1 = form['config_1'].value
+		config2 = form['config_2'].value
+ 		config3 = form['config_3'].value
+		sql.user_server_update(iden, armed, alarm, config1, config2, config3)
 #		self.wfile.write(form['his_name'].value)
 #		self.wfile.write(form['your_name'].value)
 		self.wfile.close()
