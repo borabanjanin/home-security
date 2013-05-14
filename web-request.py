@@ -8,7 +8,7 @@ import serial
 
 run = True
 mod_number = 0
-server = 'http://localhost:8090'
+server = 'http://192.168.1.3:8090'
 headers = {
   'Accept': 'application/json'
   }
