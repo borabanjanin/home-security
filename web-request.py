@@ -15,7 +15,7 @@ headers = {
 
 data = sql.json_struct()
 
-'''
+
 port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=3.0)
 buf
 
@@ -34,7 +34,7 @@ def read_port():
 	for i in range(size):
 		print buf[i]
 	return size
-'''
+
 
 def server_request():
 	response = requests.post('%s/endpoint' % server, data=json.dumps(data), headers=headers)
@@ -52,7 +52,7 @@ while run == True:
 	try:
 		#time.sleep(2)
 		server_request()
-		#size = read_port()
-		#parse_input(size)
+		size = read_port()
+		parse_input(size)
 	except KeyboardInterrupt:
 		run = False
