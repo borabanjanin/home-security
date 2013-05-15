@@ -53,12 +53,18 @@ def update_module(iden, armed, alarm, sen1, sen2, sen3, config1, config2, config
 		cur.execute("UPDATE Homesec SET config3=? WHERE iden=?",(config3, iden))
 		con.commit()
 
-def user_server_update(iden, armed, alarm, config1, config2, config3):
+def user_server_update(iden, armed, alarm):
 	con = sql.connect(DATABASE)
 	with con:
 		cur = con.cursor()
 		cur.execute("UPDATE Homesec SET armed=? WHERE iden=?",(armed, iden))
 		cur.execute("UPDATE Homesec SET alarm=? WHERE iden=?",(alarm, iden))	
+		con.commit()
+
+def user_server_config(iden, config1, config2, config3):
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()
 		cur.execute("UPDATE Homesec SET armed=? WHERE iden=?",(config1, iden))
 		cur.execute("UPDATE Homesec SET alarm=? WHERE iden=?",(config2, iden))	
 		cur.execute("UPDATE Homesec SET armed=? WHERE iden=?",(config3, iden))
