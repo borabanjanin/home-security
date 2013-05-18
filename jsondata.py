@@ -18,7 +18,7 @@ def json_struct():
 			"sensor_3":"motion",
 			"config_1":"255",
 			"config_2":"255",
-			"config_3":"255",
+			"config_3":"255",  
 		}
 	}
 	
@@ -38,6 +38,32 @@ def create_table():
 		cur = con.cursor()  
 		cur.execute("DROP TABLE IF EXISTS Homesec")
 		cur.execute("CREATE TABLE Homesec(iden TEXT, armed TEXT, alarm TEXT, sensor1 TEXT, sensor2 TEXT, sensor3 TEXT, config1 TEXT, config2 TEXT, config3 TEXT);")
+
+def create_user_table():
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()  
+		cur.execute("DROP TABLE IF EXISTS UserData")
+		cur.execute("CREATE TABLE UserData(number TEXT);")
+
+def add_number(number):
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()
+		cur.execute("INSERT INTO UserData VALUES('%s');" % ("+1" + number))
+		con.commit()
+	
+def fetch_numbers():
+	con = sql.connect(DATABASE) 
+	with con:
+		cur = con.cursor()
+		cur.execute("SELECT * FROM UserData")
+		rows = []
+		rows = cur.fetchall()
+		for row in rows:		
+			print "%s" % (row[0])
+			
+ 		return rows
 
 def update_module(iden, armed, alarm, sen1, sen2, sen3, config1, config2, config3):
 	con = sql.connect(DATABASE)
@@ -85,6 +111,7 @@ def fetch_table():
 		cur = con.cursor()
 		cur.execute("SELECT * FROM Homesec")
 		rows = cur.fetchall()
+
 		return rows
 
 def stop():
@@ -106,6 +133,7 @@ def remove_table():
 		cur.execute("DROP TABLE Homesec")
 
 def test_database():
+	'''
 	create_table()
 	create_module("0", "false", "false", "a", "b", "c","125")
 	create_module("1", "true", "false", "x", "y", "z","125")
@@ -117,7 +145,12 @@ def test_database():
 		print "data mismatch"
 	if row2 != rows[1]:
 		print "data mismatch"
-	 
+	'''
+	create_user_table()
+	add_number("4258297624")
+	#add_number("1234")
+	#add_number("5678")
+	fetch_numbers()
 
 if __name__ == "__main__":
 	test_database()

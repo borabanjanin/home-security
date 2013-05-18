@@ -10,6 +10,18 @@ import re
 import subprocess
 import jsondata as sql
 PORT = 8090
+from twilio.rest import TwilioRestClient
+
+ACCOUNT_SID = "AC10980dc422a3e9684ae913c90f009188"
+AUTH_TOKEN = "ee7a9b27a18a681741fccde6f93d7d0a"
+client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
+
+def send_text():
+	print "User Alerted"
+	numbers = sql.fetch_numbers()
+	for num in numbers:		
+		print "%s" % (num[0])
+		message = client.sms.messages.create(to=num[0],from_="+14253362335",body="Your house alarm has been tripped!!")
 
 class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def get_query_params_as_dict(self):
@@ -59,8 +71,11 @@ httpd = MyWebServer(('', PORT), MyWebHandler)
 print('serving at port %d' % PORT)
 
 try:
+	send_text()
 	httpd.serve_forever()
 except KeyboardInterrupt:
 	print('bye')
 	httpd.server_close()
+
+
 

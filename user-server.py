@@ -11,12 +11,12 @@ import os
 import re
 import subprocess
 import serial
-
 import jsondata as sql
 
 PORT = 8080
 #sql.create_table()
 #sql.create_module("0", "false", "false", "none", "none", "none", "255", "255", "255")
+
 
 class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def get_query_params_as_dict(self):
@@ -27,6 +27,16 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		return result
 
 	def do_GET(self):
+		
+		top = """%s
+		<html>
+				<head>
+					<title>CSE 477</title>
+					<link rel="stylesheet" type="text/css" href="index.css" />
+				</head>
+				<body>"""% self.path
+
+		
 		if self.path == '/favicon.ico':
 			self.send_response(404)
 			self.send_header("Content-type", "text/html")
@@ -36,30 +46,59 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.send_response(200)
 			self.send_header("Content-type", "text/html")
 			self.end_headers()
+			self.wfile.write("""%s""" %top)
 			self.wfile.write("""
-				%s
-				<form method="POST">
-				<input type="text" name="iden" />
-				<input type="text" name="config1" />
-				<input type="text" name="config2" />
-				<input type="text" name="config3" />
-				<input type="submit" name="Go" />
-				</form>
-			""" % self.path)
+						<img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" />
+						<h1>SenseI Hub User Configuration</h1>
+				<form method="POST">						
+						<fieldset>
+							<legend>System </legend>
+							Arm Status
+							<select name="armed">
+									<option value="ARMED">ARM SYSTEM</option>
+									<option value="NOT ARMED">DISARM SYSTEM</option>
+							</select><br />
+							Alarm Status 
+							<select name="alarm">
+									<option value="on">ON
+							</select>
+						</fieldset>
+				
+							<fieldset>
+								</legend>Sensor Modules</legend>
+								<input type="text" name="iden" /><br />
+								<input type="text" name="config1" /><br />
+								<input type="text" name="config2" /><br />
+								<input type="text" name="config3" /><br />
+								<input id="submit" type="submit" name="Go" />
+							</fieldset>
+						</form>
+				</body>
+		</html>
+			""" )
 		
 		else:
 			self.send_response(200)
 			self.send_header("Content-type", "text/html")
 			self.end_headers()
+			self.wfile.write("""%s""" %top)
 			self.wfile.write("""
-				%s
+				<img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" />
+				<h1>SenseI User Interface</h1>
+				
+				<p>Welcome to the SenseI user interface portal. Here you can
+				configure your system for optimal sensing use.</p>
+				
+				<br />
+				
 				<form method="POST">
-				<input type="text" name="iden" />
-				<input type="text" name="armed" />
-				<input type="text" name="alarm" />
-				<input type="submit" name="Go" />
+					<input type="text" name="iden" />
+					<input type="submit" name="Go" />
 				</form>
-			""" % self.path)
+				
+				</body>
+		</html>
+			""")
 			
 		self.wfile.close()
 
@@ -77,9 +116,10 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			         })
 		if self.path == '/configure': 
 			iden = form['iden'].value
-			config1 = form['config_1'].value
-			config2 = form['config_2'].value
-	 		config3 = form['config_3'].value
+			config1 = form['config1'].value
+			config2 = form['config2'].value
+	 		config3 = form['config3'].value
+			print form['armed'].value
 			sql.user_server_config(iden, config1, config2, config3)
 	
 		else:
@@ -105,4 +145,18 @@ if __name__ == "__main__":
 	except KeyboardInterrupt:
 		print('bye')
 		httpd.server_close()
+'''
 
+						<fieldset>
+							<legend>System </legend>
+							Arm Status
+							<select name="armed">
+									<option value="ARMED">ARM SYSTEM</option>
+									<option value="NOT ARMED">DISARM SYSTEM</option>
+							</select><br />
+							Alarm Status 
+							<select name="alarm">
+									<option value="on">ON
+							</select>
+						</fieldset>
+'''

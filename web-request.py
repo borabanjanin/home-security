@@ -6,6 +6,7 @@ import jsondata as sql
 import time
 import serial
 
+
 run = True
 mod_number = 0
 server = 'http://192.168.1.3:8090'
@@ -47,6 +48,7 @@ def server_request():
 		print('Error: HTTP %s' % response.status_code)
   		print(response_str)
 	'''
+	
 
 
 while run == True:	
