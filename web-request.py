@@ -30,7 +30,10 @@ def parse_input(size):
 				port.write(mod_number)
 				mod_number = mod_number + 1
 				input_type = 0
-			elif input_type == 'c':
+			elif buf[i] == 'c':
+				input_type = input_type + 1
+		elif input_type == 1:
+		elif input_type == 2:
 			
 
 
