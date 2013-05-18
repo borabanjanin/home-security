@@ -19,15 +19,20 @@ data = sql.json_struct()
 
 port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=3.0)
 buf = [0]*10
+input_type
 
-'''
+
 def parse_input(size):
-	if buf[0] == 'b':
-		port.write(mod_number)
-		mod_number = mod_number + 1
-	else:
-		print "data"
-'''
+	for i in range(size):
+		if input_type == 0:
+			if buf[i] == 'p':
+				port.write('p')
+				port.write(mod_number)
+				mod_number = mod_number + 1
+				input_type = 0
+			elif input_type == 'c':
+			
+
 
 def read_port():
 	size = port.readinto(buf)
@@ -56,6 +61,6 @@ while run == True:
 		#time.sleep(2)
 		server_request()
 		size = read_port()
-		#parse_input(size)
+		parse_input(size)
 	except KeyboardInterrupt:
 		run = False

@@ -10,7 +10,6 @@ import json
 import os
 import re
 import subprocess
-import serial
 import jsondata as sql
 
 PORT = 8080
