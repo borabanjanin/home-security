@@ -7,29 +7,33 @@ import sqlite3 as sql
 DATABASE = 'sensor.db'
 
 
+
 def json_struct():
 	data =  {
-		"iden": 0,
-		"armed": "false",
-		"alarm": "false",
-		"module_1": {
-			"sensor_1":"light",
-			"sensor_2":"sound",
-			"sensor_3":"motion",
-			"config_1":"255",
-			"config_2":"255",
-			"config_3":"255",  
-		}
+		"iden": "0",
+		"armed": "False",
+		"alarm": "False",
+		"sensor_1":"Default",
+		"sensor_2":"Default",
+		"sensor_3":"Default",
+		"sensor_4":"Default",
+		"sensor_5":"Default",
+		"sensor_6":"Default",
+		"sensor_7":"Default",
+		"sensor_8":"Default",
+		"slot_1":"None",
+		"slot_2":"None",
+		"slot_3":"None",
 	}
-	
 	#data = json.loads(data)
 	return data
 
-def create_module(iden, armed, alarm, sen1, sen2, sen3, config1, config2, config3):
+
+def create_module(iden, armed, alarm, sen1, sen2, sen3, sen4, sen5, sen6, sen7, sen8, slot1, slot2, slot3):
 	con = sql.connect(DATABASE)
 	with con:
 		cur = con.cursor() 
-		query = "INSERT INTO Homesec VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');" % (iden, armed, alarm, sen1, sen2, sen3, config1, config2, config3)
+		query = "INSERT INTO Homesec VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');" % (iden, armed, alarm, sen1, sen2, sen3, sen4, sen5, sen6, sen7, sen8, slot1, slot2, slot3)
 		cur.execute(query)
 
 def create_table():
@@ -37,7 +41,7 @@ def create_table():
 	with con:
 		cur = con.cursor()  
 		cur.execute("DROP TABLE IF EXISTS Homesec")
-		cur.execute("CREATE TABLE Homesec(iden TEXT, armed TEXT, alarm TEXT, sensor1 TEXT, sensor2 TEXT, sensor3 TEXT, config1 TEXT, config2 TEXT, config3 TEXT);")
+		cur.execute("CREATE TABLE Homesec(iden TEXT, armed TEXT, alarm TEXT, sensor1 TEXT, sensor2 TEXT, sensor3 TEXT, sensor4 TEXT, sensor5 TEXT, sensor6 TEXT, sensor7 TEXT, sensor8 TEXT,slot1 TEXT, slot2 TEXT, slot3 TEXT);")
 
 def create_user_table():
 	con = sql.connect(DATABASE)
@@ -64,6 +68,17 @@ def fetch_numbers():
 			print "%s" % (row[0])
 			
  		return rows
+
+
+def update_module_pi(iden, alarm, slot1, slot2, slot3):
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()
+		cur.execute("UPDATE Homesec SET alarm=? WHERE iden=?",(alarm, iden))	
+		cur.execute("UPDATE Homesec SET slot1=? WHERE iden=?",(slot1, iden))
+		cur.execute("UPDATE Homesec SET slot2=? WHERE iden=?",(slot2, iden)) 
+		cur.execute("UPDATE Homesec SET slot3=? WHERE iden=?",(slot3, iden))
+		con.commit()
 
 def update_module(iden, armed, alarm, sen1, sen2, sen3, config1, config2, config3):
 	con = sql.connect(DATABASE)
@@ -133,24 +148,14 @@ def remove_table():
 		cur.execute("DROP TABLE Homesec")
 
 def test_database():
-	'''
+
 	create_table()
-	create_module("0", "false", "false", "a", "b", "c","125")
-	create_module("1", "true", "false", "x", "y", "z","125")
-	update_module("0","true","true","d","e","f","125")
-	row1 = pull_iden("0")
-	row2 = pull_iden("1")
-	rows = fetch_table()	
-	if row1 != rows[0]:
-		print "data mismatch"
-	if row2 != rows[1]:
-		print "data mismatch"
-	'''
-	create_user_table()
-	add_number("4258297624")
-	#add_number("1234")
-	#add_number("5678")
-	fetch_numbers()
+#	create_module("25", "False", "False", "Default", "Default", "Default", "Default", "Default", "Default", "Default", "Default", "None", "None", "None")
+#	update_module_pi("25", "True", "Light", "Motion", "Sound")
+#	rows = fetch_table()
+#	print rows
+#	row =	pull_iden("25")
+#	print row[1]
 
 if __name__ == "__main__":
 	test_database()
