@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import json
+import json, ast
 import requests
 import jsondata as sql
 import time
@@ -28,15 +28,13 @@ def parse_rasp_input(size):
 	global mod_number
 	global data
 	for i in range(size):
-		print i 
-		print buf[i]
 		if input_type == 0:
 			if buf[i] == 'p':
 				port.write('p')
 				port.write(mod_number)
 				mod_number = mod_number + 1
 				input_type = 0
-			elif 'c' == buf[i]:
+			elif 'u' == buf[i]:
 				input_type = input_type + 1
 		elif input_type == 1:
 			data["iden"] = buf[i]
@@ -67,21 +65,18 @@ def parse_rasp_input(size):
 			input_type = input_type + 1
 		if input_type == 6:
 			server_request()
-			send_pi_data()
+			#send_pi_data()
 			input_type = 0
-			
-#def store_input():
 
 def send_pi_data():
-		global data		
-		port.write('iden')
-		if data['armed'] = "True"
+		global data
+		port.write(c)		
+		port.write(data['iden'])
+		if data['armed'] == "True":
 			port.write('T')
 		else:
 			port.write('F')
-		port.write('c')
-		port.write('d')
-		port.write('e')
+		if 
 
 def read_port():
 	size = port.readinto(buf)
@@ -92,14 +87,19 @@ def read_port():
 
 
 def server_request():
+	global data
 	response = requests.post('%s/endpoint' % server, data=json.dumps(data), headers=headers)
 	response_str = response.text
+	packet = json.loads(response_str)
+	data = packet['data']
+	#print data
 	if response.status_code == requests.codes.OK:
-	  print('Response: HTTP %s' % response.status_code)
-	  print(json.dumps(json.loads(response_str), indent=2))
+		print('Response: HTTP %s' % response.status_code)
+		#print(json.dumps(json.loads(response_str), indent=2))
+		#print response["armed"]
 	else:
-	  print('Error: HTTP %s' % response.status_code)
-	  print(response_str)
+		print('Error: HTTP %s' % response.status_code)
+		print(response_str)
 	
 
 def print_data():
@@ -120,8 +120,8 @@ def print_data():
 
 def test_pi_coms():
 	global buf
-	buf[0] = 'c'
-	buf[1] = '25'
+	buf[0] = 'u'
+	buf[1] = '0'
 	buf[2] = 't'
 	buf[3] = 'n'
 	buf[4] = 'n'
@@ -129,9 +129,10 @@ def test_pi_coms():
 	parse_rasp_input(6)
 	#print_data()
 
-test_pi_coms()
 while run == True:	
 	try:
+		print data
+		test_pi_coms()
 		time.sleep(2)
 		#size = read_port()
 		#parse_input(size)
