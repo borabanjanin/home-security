@@ -111,6 +111,15 @@ def user_server_config(iden, config1, config2, config3):
 		cur.execute("UPDATE Homesec SET armed=? WHERE iden=?",(config3, iden))
 		con.commit()
 
+def check_iden(iden):
+	con = sql.connect('sensor.db')
+	with con:
+		cur = con.cursor()    
+		cur.execute("Select * From Homesec WHERE iden=?", "0")
+		rows = cur.fetchall()
+		con.commit()
+		return	len(rows)
+
 def web_server_update(iden, sen1, sen2, sen3):
 	con = sql.connect(DATABASE)
 	with con:
@@ -149,14 +158,14 @@ def remove_table():
 
 def test_database():
 
-	create_table()
+#	create_table()
 #	create_module("25", "False", "False", "Default", "Default", "Default", "Default", "Default", "Default", "Default", "Default", "None", "None", "None")
 #	update_module_pi("25", "True", "Light", "Motion", "Sound")
 #	rows = fetch_table()
 #	print rows
 #	row =	pull_iden("25")
 #	print row[1]
-
+	print check_iden("0")
 if __name__ == "__main__":
 	test_database()
 

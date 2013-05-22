@@ -70,13 +70,46 @@ def parse_rasp_input(size):
 
 def send_pi_data():
 		global data
-		port.write(c)		
+		port.write("c")		
 		port.write(data['iden'])
 		if data['armed'] == "True":
-			port.write('T')
+			port.write('t')
 		else:
-			port.write('F')
-		if 
+			port.write('f')
+
+		if data['sensor_1'] == "None":
+			port.write('n')
+		else:
+			port.write('s')
+		if data['sensor_2'] == "None":
+			port.write('n')
+		else:
+			port.write('s')
+		if data['sensor_3'] == "None":
+			port.write('n')
+		else:
+			port.write('s')
+		if data['sensor_4'] == "None":
+			port.write('n')
+		else:
+			port.write('s')
+		if data['sensor_5'] == "None":
+			port.write('n')
+		else:
+			port.write('s')
+		if data['sensor_6'] == "None":
+			port.write('n')
+		else:
+			port.write('s')
+		if data['sensor_7'] == "None":
+			port.write('n')
+		else:
+			port.write('s')
+		if data['sensor_8'] == "None":
+			port.write('n')
+		else:
+			port.write('s')
+
 
 def read_port():
 	size = port.readinto(buf)

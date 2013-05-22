@@ -15,7 +15,6 @@ from twilio.rest import TwilioRestClient
 ACCOUNT_SID = "AC10980dc422a3e9684ae913c90f009188"
 AUTH_TOKEN = "ee7a9b27a18a681741fccde6f93d7d0a"
 client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
-created = -1
 sql.create_table()
 
 def send_text():
@@ -50,8 +49,7 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		slot3 = post_data['slot_3']
 		
 		#needs to be altered to allow for scaling
-		if iden > created:
-			created = created + 1
+		if sql.check_iden(post_data['iden']) == 0:
 			sql.create_module(iden, "False", alarm, "Default", "Default", "Default", "Default", "Default", "Default", "Default", "Default", slot1, slot2, slot3)
 		else:
 			sql.update_module_pi(iden, alarm, slot1, slot2, slot3)
