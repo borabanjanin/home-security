@@ -8,7 +8,7 @@ import serial
 
 
 run = True
-mod_number = 0
+mod_number = 1
 server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
@@ -37,13 +37,14 @@ def parse_rasp_input(size):
 			elif 'u' == buf[i]:
 				input_type = input_type + 1
 		elif input_type == 1:
+			print buf[i]
 			data["iden"] = buf[i]
 			input_type = input_type + 1
 		elif input_type == 2:
 			if 't' == buf[i]:
-				data["alarm"] = "True"
+				data["alarm"] = "On"
 			else:
-				data["alarm"] = "False"
+				data["alarm"] = "Off"
 			input_type = input_type + 1
 		elif input_type == 3:
 			if 'n' == buf[i]:
@@ -72,7 +73,7 @@ def send_pi_data():
 		global data
 		port.write("c")		
 		port.write(data['iden'])
-		if data['armed'] == "True":
+		if data['armed'] == "On":
 			port.write('t')
 		else:
 			port.write('f')
@@ -124,7 +125,7 @@ def server_request():
 	response = requests.post('%s/endpoint' % server, data=json.dumps(data), headers=headers)
 	response_str = response.text
 	packet = json.loads(response_str)
-	data = packet['data']
+	#data = packet['data']
 	#print data
 	if response.status_code == requests.codes.OK:
 		print('Response: HTTP %s' % response.status_code)
@@ -151,16 +152,27 @@ def print_data():
 	print	data['slot_2']
 	print	data['slot_3']
 
+char = '0'
 def test_pi_coms():
 	global buf
+	global char
 	buf[0] = 'u'
-	buf[1] = '0'
-	buf[2] = 't'
+	buf[1] = chr(ord(char) + 1)
+	char = chr(ord(char) + 1)
+	print "char: " + char
+	buf[2] = 'f'
 	buf[3] = 'n'
 	buf[4] = 'n'
 	buf[5] = 'n'
 	parse_rasp_input(6)
-	#print_data()
+	buf[0] = 'u'
+	buf[1] = '1'
+	buf[2] = 'f'
+	buf[3] = 'n'
+	buf[4] = 'n'
+	buf[5] = 'n'
+	parse_rasp_input(6)
+
 
 while run == True:	
 	try:

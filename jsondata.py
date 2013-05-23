@@ -11,8 +11,8 @@ DATABASE = 'sensor.db'
 def json_struct():
 	data =  {
 		"iden": "0",
-		"armed": "False",
-		"alarm": "False",
+		"armed": "Off",
+		"alarm": "Off",
 		"sensor_1":"Default",
 		"sensor_2":"Default",
 		"sensor_3":"Default",
@@ -69,6 +69,14 @@ def fetch_numbers():
 			
  		return rows
 
+def alarm_status():
+	con = sql.connect('sensor.db')
+	with con:
+		cur = con.cursor()    
+		cur.execute("Select * From Homesec WHERE alarm=\"On\";")
+		rows = cur.fetchall()
+		con.commit()
+		return len(rows)
 
 def update_module_pi(iden, alarm, slot1, slot2, slot3):
 	con = sql.connect(DATABASE)
@@ -115,8 +123,9 @@ def check_iden(iden):
 	con = sql.connect('sensor.db')
 	with con:
 		cur = con.cursor()    
-		cur.execute("Select * From Homesec WHERE iden=?", "0")
+		cur.execute("Select * From Homesec WHERE iden=?", iden)
 		rows = cur.fetchall()
+		print rows
 		con.commit()
 		return	len(rows)
 
@@ -158,14 +167,16 @@ def remove_table():
 
 def test_database():
 
-#	create_table()
-#	create_module("25", "False", "False", "Default", "Default", "Default", "Default", "Default", "Default", "Default", "Default", "None", "None", "None")
-#	update_module_pi("25", "True", "Light", "Motion", "Sound")
-#	rows = fetch_table()
-#	print rows
-#	row =	pull_iden("25")
-#	print row[1]
-	print check_iden("0")
+	#create_table()
+	#create_module("25", "Off", "Off", "Default", "Default", "Default", "Default", "Default", "Default", "Default", "Default", "None", "None", "None")
+	#update_module_pi("25", "Off", "Light", "Motion", "Sound")
+	#rows = fetch_table()
+	#print rows
+	#row =	pull_iden("25")
+	#print row[1]
+	#print check_iden("0")
+	print alarm_status()
+
 if __name__ == "__main__":
 	test_database()
 

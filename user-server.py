@@ -27,13 +27,13 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 	def do_GET(self):
 		
-		top = """%s
+		top = """
 		<html>
 				<head>
 					<title>CSE 477</title>
 					<link rel="stylesheet" type="text/css" href="index.css" />
 				</head>
-				<body>"""% self.path
+				<body>"""
 
 		
 		if self.path == '/favicon.ico':
@@ -42,6 +42,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.end_headers()
 	
 		elif self.path == '/configure':
+			
 			self.send_response(200)
 			self.send_header("Content-type", "text/html")
 			self.end_headers()
@@ -77,28 +78,39 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			""" )
 		
 		else:
+			alarm_message = ""
+			if sql.alarm_status() == 0:
+				alarm_message = "OFF"
+			else:
+				alarm_message = "Tripped"
 			self.send_response(200)
 			self.send_header("Content-type", "text/html")
 			self.end_headers()
 			self.wfile.write("""%s""" %top)
 			self.wfile.write("""
 				<img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" />
-				<h1>SenseI User Interface</h1>
+				<h1>SenseI Portal</h1>
 				
-				<p>Welcome to the SenseI user interface portal. Here you can
-				configure your system for optimal sensing use.</p>
+				<p>Welcome to the SenseI user interface portal</p>
 				
-				<br />
-				
+
+			""")
+
+			
+			self.wfile.write("""
+
 				<form method="POST">
 					<input type="text" name="iden" />
 					<input type="submit" name="Go" />
 				</form>
-				
 				</body>
-		</html>
-			""")
+
+				<p><b>Status:</b>.</p>
+		
+				Alarm: %s
+			</html>
 			
+			"""% alarm_message)
 		self.wfile.close()
 
 
@@ -158,4 +170,10 @@ if __name__ == "__main__":
 									<option value="on">ON
 							</select>
 						</fieldset>
+
+
+					<select name="armed">
+							<option value="ARMED" selected="selected">ARM SYSTEM</option>
+							<option value="NOT ARMED">DISARM SYSTEM</option>
+					</select><br />
 '''
