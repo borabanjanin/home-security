@@ -93,30 +93,50 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				
 				<p>Welcome to the SenseI user interface portal</p>
 				
-
 			""")
 
 			
 			self.wfile.write("""
 
-				<form method="POST">
-					<input type="text" name="iden" />
-					<input type="submit" name="Go" />
-				</form>
-				</body>
+
 
 				<p><b>Status:</b>.</p>
 		
-				Alarm: %s
-			</html>
+				<p> Alarm: %s </p>
+	
 			
 			"""% alarm_message)
-		self.wfile.close()
 
+		rows = sql.arm_status()
+		for row in rows:
+			message = ""
+			if row[1] == "Off":
+				message = "Disarmed"
+			else: 
+				message = "Armed"
+			self.wfile.write("""
+			<p> Module %s: %s </p>
+			"""%(row[0],message))
+		self.wfile.write("""			
+				<form method="POST">
+					<select name="armed">
+					<option value="True">ARM SYSTEM</option>
+					<option value="False">DISARM SYSTEM</option>
+					</select><br />	
+					<input type="submit" name="Go" />
+				</form>
+				</body>
+					</html>
+		""")
+
+		self.wfile.close()
 
 	def do_POST(self):
 		#print self.path
-		self.send_response(200)
+		#self.send_response(200)
+		#self.end_headers()
+		self.send_response(301)
+		self.send_header('','localhost:8080')
 		self.end_headers()
 
 		form = cgi.FieldStorage(
@@ -134,15 +154,11 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			sql.user_server_config(iden, config1, config2, config3)
 	
 		else:
-			iden = form['iden'].value
-			armed = form['armed'].value
-			alarm = form['alarm'].value
-			sql.user_server_update(iden, armed, alarm)
+			sql.arm_system(form['armed'].value)
 			
 #		self.wfile.write(form['his_name'].value)
 #		self.wfile.write(form['your_name'].value)
 		self.wfile.close()
-
 
 class MyHTTPServer(SocketServer.TCPServer):
 	allow_reuse_address = True
@@ -176,4 +192,12 @@ if __name__ == "__main__":
 							<option value="ARMED" selected="selected">ARM SYSTEM</option>
 							<option value="NOT ARMED">DISARM SYSTEM</option>
 					</select><br />
+
+
+			self.wfile.write("""
+					<select name="%s">
+							<option value="ARMED">ARM MODULE %s </option>
+							<option value="NOT ARMED">DISARM MODULE %s </option>
+							</select><br />
+			"""% (row[0], row[0], row[0]))
 '''
