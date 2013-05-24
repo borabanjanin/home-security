@@ -48,13 +48,13 @@ def create_user_table():
 	with con:
 		cur = con.cursor()  
 		cur.execute("DROP TABLE IF EXISTS UserData")
-		cur.execute("CREATE TABLE UserData(number TEXT);")
+		cur.execute("CREATE TABLE UserData(number TEXT, mac TEXT);")
 
-def add_number(number):
+def add_number(number, mac):
 	con = sql.connect(DATABASE)
 	with con:
 		cur = con.cursor()
-		cur.execute("INSERT INTO UserData VALUES('%s');" % ("+1" + number))
+		cur.execute("INSERT INTO UserData VALUES('%s', '%s');" % ("+1" + number, mac))
 		con.commit()
 	
 def fetch_numbers():
@@ -95,6 +95,13 @@ def arm_system(status):
 			cur.execute("UPDATE Homesec SET armed=\"On\"")	
 		else:
 			cur.execute("UPDATE Homesec SET armed=\"Off\"")
+		con.commit()
+
+def arm_module(iden,armed):
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()
+		cur.execute("UPDATE Homesec SET armed=? WHERE iden=?",(armed, iden))	
 		con.commit()
 
 def update_module_pi(iden, alarm, slot1, slot2, slot3):
@@ -166,6 +173,14 @@ def fetch_table():
 
 		return rows
 
+def fetch_idens():
+	con = sql.connect(DATABASE) 
+	with con:
+		cur = con.cursor()
+		cur.execute("SELECT iden FROM Homesec")
+		rows = cur.fetchall()
+		return rows
+
 def stop():
 	print "in progress"
 
@@ -194,7 +209,8 @@ def test_database():
 	#row =	pull_iden("25")
 	#print row[1]
 	#print check_iden("0")
-	arm_system("True")
+	create_user_table()
+	add_number("xyz","abc")
 
 if __name__ == "__main__":
 	test_database()

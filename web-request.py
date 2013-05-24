@@ -9,7 +9,7 @@ import serial
 
 run = True
 mod_number = 1
-server = 'http://localhost:8090'
+server = 'http://192.168.1.3:8090'
 headers = {
   'Accept': 'application/json'
   }
@@ -37,7 +37,6 @@ def parse_rasp_input(size):
 			elif 'u' == buf[i]:
 				input_type = input_type + 1
 		elif input_type == 1:
-			print buf[i]
 			data["iden"] = buf[i]
 			input_type = input_type + 1
 		elif input_type == 2:
@@ -88,6 +87,7 @@ def send_pi_data():
 			port.write('s')
 		if data['sensor_3'] == "None":
 			port.write('n')
+
 		else:
 			port.write('s')
 		if data['sensor_4'] == "None":
@@ -114,9 +114,6 @@ def send_pi_data():
 
 def read_port():
 	size = port.readinto(buf)
-	print size
-	for i in range(size):
-		print buf[i]
 	return size
 
 
@@ -159,7 +156,6 @@ def test_pi_coms():
 	buf[0] = 'u'
 	buf[1] = chr(ord(char) + 1)
 	char = chr(ord(char) + 1)
-	print "char: " + char
 	buf[2] = 'f'
 	buf[3] = 'n'
 	buf[4] = 'n'

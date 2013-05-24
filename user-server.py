@@ -15,7 +15,7 @@ import jsondata as sql
 PORT = 8080
 #sql.create_table()
 #sql.create_module("0", "false", "false", "none", "none", "none", "255", "255", "255")
-
+sql.create_user_table()
 
 class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def get_query_params_as_dict(self):
@@ -30,8 +30,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		top = """
 		<html>
 				<head>
-					<title>CSE 477</title>
-					<link rel="stylesheet" type="text/css" href="index.css" />
+					<title>CSE 477</title>					
 				</head>
 				<body>"""
 
@@ -47,36 +46,44 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.send_header("Content-type", "text/html")
 			self.end_headers()
 			self.wfile.write("""%s""" %top)
+			self.wfile.write("""<br><img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" /></br>""")
 			self.wfile.write("""
-						<img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" />
-						<h1>SenseI Hub User Configuration</h1>
-				<form method="POST">						
-						<fieldset>
-							<legend>System </legend>
-							Arm Status
-							<select name="armed">
-									<option value="ARMED">ARM SYSTEM</option>
-									<option value="NOT ARMED">DISARM SYSTEM</option>
-							</select><br />
-							Alarm Status 
-							<select name="alarm">
-									<option value="on">ON
-							</select>
-						</fieldset>
-				
-							<fieldset>
-								</legend>Sensor Modules</legend>
-								<input type="text" name="iden" /><br />
-								<input type="text" name="config1" /><br />
-								<input type="text" name="config2" /><br />
-								<input type="text" name="config3" /><br />
-								<input id="submit" type="submit" name="Go" />
-							</fieldset>
-						</form>
+						<h1>SenseI Hub User Configuration</h1>				
+			""" )
+
+			self.wfile.write("""<form method="POST">""")
+			self.wfile.write("""	<fieldset>""")
+			self.wfile.write("""		<legend>System </legend>""")
+			self.wfile.write("""		<select name="iden">""")
+			rows = sql.fetch_idens()
+			for row in rows:
+				self.wfile.write("""			<option value="%s"> Module %s</option>"""%(row[0],row[0]))
+			self.wfile.write("""		</select><br />""")	
+			self.wfile.write("""		<select name="armed">""")
+			self.wfile.write("""			<option value="On"> Arm </option>""")
+			self.wfile.write("""			<option value="Off"> Disarm </option>""")
+			self.wfile.write("""		</select>""")
+			self.wfile.write("""</fieldset>""")
+			self.wfile.write("""<input type="submit" name="Go" />""")
+			self.wfile.write("""
+				</form>
 				</body>
 		</html>
 			""" )
-		
+		elif self.path == '/telephone':		
+			self.send_response(200)
+			self.send_header("Content-type", "text/html")
+			self.end_headers()
+			self.wfile.write("""%s""" %top)
+			self.wfile.write("""<br><img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" /></br>""")
+			self.wfile.write("""<br><form method="POST"></br>""")
+			self.wfile.write("""<br>Phone Number: <input type="text" name="phone"/></br>""")
+			self.wfile.write("""<br>MAC Address: <input type="text" name="mac"/></br>""")
+			self.wfile.write("""<br><input type="submit" name="Go" /></br>""")
+			self.wfile.write("""<br></form></br>""")
+			self.wfile.write("""<br></body></br>""")
+			self.wfile.write("""<br></html></br>""")
+
 		else:
 			alarm_message = ""
 			if sql.alarm_status() == 0:
@@ -107,27 +114,27 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			
 			"""% alarm_message)
 
-		rows = sql.arm_status()
-		for row in rows:
-			message = ""
-			if row[1] == "Off":
-				message = "Disarmed"
-			else: 
-				message = "Armed"
-			self.wfile.write("""
-			<p> Module %s: %s </p>
-			"""%(row[0],message))
-		self.wfile.write("""			
-				<form method="POST">
-					<select name="armed">
-					<option value="True">ARM SYSTEM</option>
-					<option value="False">DISARM SYSTEM</option>
-					</select><br />	
-					<input type="submit" name="Go" />
-				</form>
-				</body>
-					</html>
-		""")
+			rows = sql.arm_status()
+			for row in rows:
+				message = ""
+				if row[1] == "Off":
+					message = "Disarmed"
+				else: 
+					message = "Armed"
+				self.wfile.write("""
+				<p> Module %s: %s </p>
+				"""%(row[0],message))
+			self.wfile.write("""			
+					<form method="POST" action="/">
+						<select name="armed">
+						<option value="True">ARM SYSTEM</option>
+						<option value="False">DISARM SYSTEM</option>
+						</select><br />	
+						<input type="submit" name="Go" />
+					</form>
+					</body>
+						</html>
+			""")
 
 		self.wfile.close()
 
@@ -147,12 +154,12 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			         })
 		if self.path == '/configure': 
 			iden = form['iden'].value
-			config1 = form['config1'].value
-			config2 = form['config2'].value
-	 		config3 = form['config3'].value
-			print form['armed'].value
-			sql.user_server_config(iden, config1, config2, config3)
-	
+			arm = form['armed'].value
+			sql.arm_module(iden,arm)
+		elif self.path == '/telephone':
+			phone = form['phone'].value
+			mac = form['mac'].value
+			sql.add_number(phone,mac)
 		else:
 			sql.arm_system(form['armed'].value)
 			

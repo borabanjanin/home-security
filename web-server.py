@@ -80,7 +80,7 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 class MyWebServer(SocketServer.TCPServer):
 	allow_reuse_address = True
 	
-httpd = MyWebServer(('', PORT), MyWebHandler)
+httpd = MyWebServer(('192.168.1.3', PORT), MyWebHandler)
 print('serving at port %d' % PORT)
 
 try:
