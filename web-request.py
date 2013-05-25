@@ -17,7 +17,7 @@ headers = {
 data = sql.json_struct()
 
 
-port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=3.0)
+port = serial.Serial("/dev/ttyAMA0", baudrate=9600)
 buf = [0]*12
 test = 0
 input_type = 0
@@ -134,7 +134,12 @@ def send_pi_data():
 
 def read_port():
 	buf[0] = port.read(1)
-	return 1
+	buf[1] = port.read(1)
+	buf[2] = port.read(1)
+	buf[3] = port.read(1)
+	buf[4] = port.read(1)
+	buf[5] = port.read(1)
+	return 6
 
 
 def server_request():
