@@ -18,7 +18,7 @@ data = sql.json_struct()
 
 
 #port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=3.0)
-buf = [0]*10
+buf = [0]*12
 test = 0
 input_type = 0
 
@@ -46,27 +46,28 @@ def parse_rasp_input(size):
 				data["alarm"] = "Off"
 			input_type = input_type + 1
 		elif input_type == 3:
-			if 'n' == buf[i]:
-				data["slot_1"] = "None"
-			else:
-				data["slot_1"] = "SensorName"
+			data["slot_1"] = process_slot(buf[i])
 			input_type = input_type + 1
 		elif input_type == 4:
-			if 'n' == buf[i]:
-				data["slot_2"] = "None"
-			else:
-				data["slot_2"] = "SensorName"
+			data["slot_2"] = process_slot(buf[i])
 			input_type = input_type + 1
 		elif input_type == 5:
-			if 'n' == buf[i]:
-				data["slot_3"] = "None"
-			else:
-				data["slot_3"] = "SensorName"
+			data["slot_3"] = process_slot(buf[i])
 			input_type = input_type + 1
 		if input_type == 6:
 			server_request()
 			#send_pi_data()
 			input_type = 0
+
+def process_slot(input_char):
+	sensor_name = ""
+	if '7' == input_char:
+		sensor_name = "None"
+	elif '3' == input_char:
+		sensor_name = "TestSensor"
+	else:
+		sensor_name = "SensorName"
+	return sensor_name
 
 def send_pi_data():
 		global data
@@ -160,22 +161,22 @@ def test_pi_coms():
 	buf[3] = 'n'
 	buf[4] = 'n'
 	buf[5] = 'n'
-	parse_rasp_input(6)
-	buf[0] = 'u'
-	buf[1] = '1'
-	buf[2] = 'f'
-	buf[3] = 'n'
-	buf[4] = 'n'
-	buf[5] = 'n'
-	parse_rasp_input(6)
+	#parse_rasp_input(6)
+	buf[6] = 'u'
+	buf[7] = '1'
+	buf[8] = 'f'
+	buf[9] = 'n'
+	buf[10] = 'n'
+	buf[11] = 'n'
+	parse_rasp_input(12)
 
 
 while run == True:	
 	try:
 		print data
-		test_pi_coms()
+		#test_pi_coms()
 		time.sleep(2)
-		#size = read_port()
-		#parse_input(size)
+		size = read_port()
+		parse_input(size)
 	except KeyboardInterrupt:
 		run = False

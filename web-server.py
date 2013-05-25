@@ -48,6 +48,9 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		slot2 = post_data['slot_2']
 		slot3 = post_data['slot_3']
 		
+		if alarm == "On":
+			send_text()
+
 		#needs to be altered to allow for scaling
 		if sql.check_iden(post_data['iden']) == 0:
 			print "created" + post_data['iden']
