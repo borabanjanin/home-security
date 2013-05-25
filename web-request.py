@@ -9,7 +9,7 @@ import serial
 
 run = True
 mod_number = "1"
-#server = 'http://192.168.1.3:8090'
+server = 'http://192.168.1.3:8090'
 server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
@@ -18,7 +18,7 @@ headers = {
 data = sql.json_struct()
 
 
-#port = serial.Serial("/dev/ttyAMA0", baudrate=9600)
+port = serial.Serial("/dev/ttyAMA0", baudrate=9600)
 buf = [0]*12
 test = 0
 input_type = 0
@@ -31,8 +31,8 @@ def parse_rasp_input(size):
 	for i in range(size):
 		if input_type == 0:
 			if buf[i] == 'p':
-				#port.write('p')
-				#port.write(mod_number)
+				port.write('p')
+				port.write(mod_number)
 				modules_created.append(mod_number)
 				mod_number = chr(ord(mod_number) + 1)
 				input_type = 0
@@ -69,7 +69,7 @@ def parse_rasp_input(size):
 		if input_type == 6:
 			print "sending server request"
 			server_request()
-			#send_pi_data()
+			send_pi_data()
 			input_type = 0
 
 def process_slot(input_char):
@@ -214,10 +214,10 @@ def test_pi_coms():
 while run == True:	
 	try:
 		#print data
-		test_pi_coms()
+		#test_pi_coms()
 		#time.sleep(2)
-		#size = read_port()
-		#parse_rasp_input(size)
+		size = read_port()
+		parse_rasp_input(size)
 	except KeyboardInterrupt:
 		run = False
 	except:

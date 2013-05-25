@@ -110,51 +110,51 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				alarm_message = "OFF"
 			else:
 				alarm_message = "Tripped"
-				self.send_response(200)
-				self.send_header("Content-type", "text/html")
-				self.end_headers()
-				self.wfile.write("""%s""" %top)
-				self.wfile.write("""
-					<img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" />
-					<h1>SenseI Portal</h1>
+			self.send_response(200)
+			self.send_header("Content-type", "text/html")
+			self.end_headers()
+			self.wfile.write("""%s""" %top)
+			self.wfile.write("""
+				<img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" />
+				<h1>SenseI Portal</h1>
+			
+				<p>Welcome to the SenseI user interface portal</p>
 				
-					<p>Welcome to the SenseI user interface portal</p>
-				
-				""")
+			""")
 
 			
-				self.wfile.write("""
+			self.wfile.write("""
 
 
 
-					<p><b>Status:</b>.</p>
+				<p><b>Status:</b>.</p>
 		
-					<p> Alarm: %s </p>
+				<p> Alarm: %s </p>
 	
 			
-				"""% alarm_message)
+			"""% alarm_message)
 
-				rows = sql.arm_status()
-				for row in rows:
-					message = ""
-					if row[1] == "Off":
-						message = "Disarmed"
-					else: 
-						message = "Armed"
-					self.wfile.write("""
-					<p> Module %s: %s </p>
-					"""%(row[0],message))
-				self.wfile.write("""			
-						<form method="POST" action="/">
-							<select name="armed">
-							<option value="True">ARM SYSTEM</option>
-							<option value="False">DISARM SYSTEM</option>
-							</select><br />	
-							<input type="submit" name="Go" />
-						</form>
-						</body>
-							</html>
-				""")
+			rows = sql.arm_status()
+			for row in rows:
+				message = ""
+				if row[1] == "Off":
+					message = "Disarmed"
+				else: 
+					message = "Armed"
+				self.wfile.write("""
+				<p> Module %s: %s </p>
+				"""%(row[0],message))
+			self.wfile.write("""			
+					<form method="POST" action="/">
+						<select name="armed">
+						<option value="True">ARM SYSTEM</option>
+						<option value="False">DISARM SYSTEM</option>
+						</select><br />	
+						<input type="submit" name="Go" />
+					</form>
+					</body>
+						</html>
+			""")
 
 		self.wfile.close()
 
