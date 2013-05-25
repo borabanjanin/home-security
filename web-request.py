@@ -28,7 +28,6 @@ def parse_rasp_input(size):
 	global mod_number
 	global data
 	for i in range(size):
-		print input_type
 		if input_type == 0:
 			if buf[i] == 'p':
 				port.write('p')
@@ -74,46 +73,64 @@ def process_slot(input_char):
 def send_pi_data():
 		global data
 		port.write("c")		
+		print 'c'
 		port.write(data['iden'])
+		print data['iden']
 		if data['armed'] == "On":
 			port.write('t')
+			print 't'
 		else:
 			port.write('f')
+			print 'f'
 
 		if data['sensor_1'] == "None":
 			port.write('n')
+			print 'n'
 		else:
 			port.write('s')
+			print 's'
 		if data['sensor_2'] == "None":
 			port.write('n')
+			print 'n'
 		else:
 			port.write('s')
+			print 's'
 		if data['sensor_3'] == "None":
 			port.write('n')
-
+			print 'n'
 		else:
 			port.write('s')
+			print 's'
 		if data['sensor_4'] == "None":
 			port.write('n')
+			print 'n'
 		else:
 			port.write('s')
+			print 's'
 		if data['sensor_5'] == "None":
 			port.write('n')
+			print 'n'
 		else:
 			port.write('s')
+			print 's'
 		if data['sensor_6'] == "None":
 			port.write('n')
+			print 'n'
 		else:
 			port.write('s')
+			print 's'
 		if data['sensor_7'] == "None":
 			port.write('n')
+			print 'n'
 		else:
 			port.write('s')
+			print 's'
 		if data['sensor_8'] == "None":
 			port.write('n')
+			print 'n'
 		else:
 			port.write('s')
-
+			print 's'
 
 def read_port():
 	buf[0] = port.read(1)
@@ -179,8 +196,6 @@ while run == True:
 		#test_pi_coms()
 		#time.sleep(2)
 		size = read_port()
-		#for i in range(size):
-		#	print buf[i]
 		parse_rasp_input(size)
 	except KeyboardInterrupt:
 		run = False

@@ -48,13 +48,13 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		slot2 = post_data['slot_2']
 		slot3 = post_data['slot_3']
 		
-		if alarm == "On":
-			send_text()
+		#if alarm == "On":
+		#	send_text()
 
 		#needs to be altered to allow for scaling
 		if sql.check_iden(post_data['iden']) == 0:
 			print "created" + post_data['iden']
-			sql.create_module(iden, "Off", alarm, "Default", "Default", "Default", "Default", "Default", "Default", "Default", "Default", slot1, slot2, slot3)
+			sql.create_module(iden, "Off", alarm, "None", "None", "None", "None", "None", "None", "None", "None", slot1, slot2, slot3)
 		else:
 			sql.update_module_pi(iden, alarm, slot1, slot2, slot3)
 			#print iden
