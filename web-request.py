@@ -8,8 +8,9 @@ import serial
 
 
 run = True
-mod_number = 1
-server = 'http://192.168.1.3:8090'
+mod_number = "1"
+#server = 'http://192.168.1.3:8090'
+server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
   }
@@ -17,11 +18,11 @@ headers = {
 data = sql.json_struct()
 
 
-port = serial.Serial("/dev/ttyAMA0", baudrate=9600)
+#port = serial.Serial("/dev/ttyAMA0", baudrate=9600)
 buf = [0]*12
 test = 0
 input_type = 0
-
+modules_created = []
 
 def parse_rasp_input(size):
 	global input_type
@@ -30,34 +31,45 @@ def parse_rasp_input(size):
 	for i in range(size):
 		if input_type == 0:
 			if buf[i] == 'p':
-				port.write('p')
-				port.write(mod_number)
-				mod_number = mod_number + 1
+				#port.write('p')
+				#port.write(mod_number)
+				modules_created.append(mod_number)
+				mod_number = chr(ord(mod_number) + 1)
 				input_type = 0
 			elif 'u' == buf[i]:
 				input_type = input_type + 1
+			else:
+				print "error: packet type"
+				input_type = 0
 		elif input_type == 1:
-			data["iden"] = buf[i]
-			input_type = input_type + 1
+			if buf[i] in modules_created:
+				data["iden"] = buf[i]
+				input_type = input_type + 1
+			else:
+				print "error: module not created"
+				input_type = 0
 		elif input_type == 2:
 			if 't' == buf[i]:
 				data["alarm"] = "On"
-			else:
+				input_type = input_type + 1			
+			elif 'f' == buf[i]:
 				data["alarm"] = "Off"
-			input_type = input_type + 1
-		elif input_type == 3:
-			data["slot_1"] = process_slot(buf[i])
-			input_type = input_type + 1
-		elif input_type == 4:
-			data["slot_2"] = process_slot(buf[i])
-			input_type = input_type + 1
-		elif input_type == 5:
-			data["slot_3"] = process_slot(buf[i])
-			input_type = input_type + 1
+				input_type = input_type + 1
+			else:
+				print "error: improper alarm data"
+				input_type = 0
+		elif input_type == 3 or input_type == 4 or input_type == 5:
+			sensor_slot = process_slot(buf[i])
+			if "error" != sensor_slot:
+				data["slot_1"] = sensor_slot
+				input_type = input_type + 1
+			else:
+				print "error: slot type"
+				input_type = 0
 		if input_type == 6:
 			print "sending server request"
 			server_request()
-			send_pi_data()
+			#send_pi_data()
 			input_type = 0
 
 def process_slot(input_char):
@@ -67,7 +79,7 @@ def process_slot(input_char):
 	elif '3' == input_char:
 		sensor_name = "TestSensor"
 	else:
-		sensor_name = "SensorName"
+		sensor_name = "erorr"
 	return sensor_name
 
 def send_pi_data():
@@ -178,6 +190,8 @@ char = '0'
 def test_pi_coms():
 	global buf
 	global char
+	buf[0] = 'p'
+	parse_rasp_input(1)
 	buf[0] = 'u'
 	buf[1] = chr(ord(char) + 1)
 	char = chr(ord(char) + 1)
@@ -198,9 +212,15 @@ def test_pi_coms():
 while run == True:	
 	try:
 		#print data
-		#test_pi_coms()
+		test_pi_coms()
 		#time.sleep(2)
-		size = read_port()
-		parse_rasp_input(size)
+		#size = read_port()
+		#parse_rasp_input(size)
 	except KeyboardInterrupt:
 		run = False
+	except:
+		#input_type = 0
+		#pass
+		print "what"
+	else:
+		print "Some Error Keep Running!!!"
