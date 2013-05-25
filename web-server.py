@@ -22,7 +22,7 @@ def send_text():
 	numbers = sql.fetch_numbers()
 	for num in numbers:		
 		print "%s" % (num[1])
-		message = client.sms.messages.create(to=num[0],from_="+14253362335",body="Your house alarm has been tripped!!")
+		message = client.sms.messages.create(to=num[1],from_="+14253362335",body="Your house alarm has been tripped!!")
 
 class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def get_query_params_as_dict(self):
@@ -48,8 +48,8 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		slot2 = post_data['slot_2']
 		slot3 = post_data['slot_3']
 		
-		#if alarm == "On":
-		#	send_text()
+		if alarm == "On":
+			send_text()
 
 		#needs to be altered to allow for scaling
 		if sql.check_iden(post_data['iden']) == 0:
