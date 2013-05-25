@@ -21,7 +21,7 @@ def send_text():
 	print "User Alerted"
 	numbers = sql.fetch_numbers()
 	for num in numbers:		
-		print "%s" % (num[0])
+		print "%s" % (num[1])
 		message = client.sms.messages.create(to=num[0],from_="+14253362335",body="Your house alarm has been tripped!!")
 
 class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):

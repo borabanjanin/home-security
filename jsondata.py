@@ -48,20 +48,20 @@ def create_user_table():
 	with con:
 		cur = con.cursor()  
 		cur.execute("DROP TABLE IF EXISTS UserData")
-		cur.execute("CREATE TABLE UserData(number TEXT mac TEXT);")
+		cur.execute("CREATE TABLE UserData(iden TEXT, number TEXT, mac TEXT);")
 
-def add_number(number, mac):
+def add_number(iden,number, mac):
 	con = sql.connect(DATABASE)
 	with con:
 		cur = con.cursor()
-		cur.execute("INSERT INTO UserData VALUES('%s', '%s');" % ("+1" + number, mac))
+		cur.execute("INSERT INTO UserData VALUES('%s','%s', '%s');" % (iden,"+1" + number, mac))
 		con.commit()
 	
 def fetch_numbers():
 	con = sql.connect(DATABASE) 
 	with con:
 		cur = con.cursor()
-		cur.execute("SELECT * FROM UserData")
+		cur.execute("SELECT iden,number,mac FROM UserData")
 		rows = []
 		rows = cur.fetchall()
 		for row in rows:		

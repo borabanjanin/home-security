@@ -16,6 +16,7 @@ PORT = 8080
 #sql.create_table()
 #sql.create_module("0", "false", "false", "none", "none", "none", "255", "255", "255")
 sql.create_user_table()
+phone_iden = "1"
 
 class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def get_query_params_as_dict(self):
@@ -30,7 +31,13 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		top = """
 		<html>
 				<head>
-					<title>CSE 477</title>					
+					<title>CSE 477</title>	
+					<script>
+					function redirect()
+					  {
+					  window.location.assign("localhost:8080/configure")
+					  }
+					</script>				
 				</head>
 				<body>"""
 
@@ -64,7 +71,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.wfile.write("""			<option value="Off"> Disarm </option>""")
 			self.wfile.write("""		</select>""")
 			self.wfile.write("""</fieldset>""")
-			self.wfile.write("""<input type="submit" name="Go" />""")
+			self.wfile.write("""<input type="submit" name="Go" onclick="redirect()"/>""")
 			self.wfile.write("""
 				</form>
 				</body>
@@ -76,10 +83,23 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.end_headers()
 			self.wfile.write("""%s""" %top)
 			self.wfile.write("""<br><img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" /></br>""")
-			self.wfile.write("""<br><form method="POST"></br>""")
+			self.wfile.write("""<br><form method="POST"></br>""")	
 			self.wfile.write("""<br>	Phone Number: <input type="text" name="phone"/></br>""")
+			self.wfile.write("""<br>Example Phone number: 4251234567</br>""")
 			self.wfile.write("""<br>	MAC Address: <input type="text" name="mac"/></br>""")
+			self.wfile.write("""<br>Example MAC Address: 78:2b:cb:90:b6:94 </br>""")
 			self.wfile.write("""<br><input type="submit" name="Go" /></br>""")
+			response = "<br>Numbers Already entered: </br>"
+			numbers = sql.fetch_numbers()
+			for num in numbers:
+				response += "<fieldset>"
+				#response += "<br></t>	Click to remove "
+				#response	+=	""" <input type="checkbox" name="%s" value="checked"/>  </br>""" % (num[0])
+				response += "#Phone %s" % num[0]
+				response += "</t><br><fieldset>	Phone Number: %s  </fieldset>" % (num[1])
+				response += "</t><fieldset>	Mac Address: %s </fieldset></br>" %	(num[2])
+ 				response += "</fieldset>"
+			self.wfile.write("""%s""" % response)
 			self.wfile.write("""<br></form></br>""")
 			self.wfile.write("""<br></body></br>""")
 			self.wfile.write("""<br></html></br>""")
@@ -90,55 +110,56 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				alarm_message = "OFF"
 			else:
 				alarm_message = "Tripped"
-			self.send_response(200)
-			self.send_header("Content-type", "text/html")
-			self.end_headers()
-			self.wfile.write("""%s""" %top)
-			self.wfile.write("""
-				<img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" />
-				<h1>SenseI Portal</h1>
+				self.send_response(200)
+				self.send_header("Content-type", "text/html")
+				self.end_headers()
+				self.wfile.write("""%s""" %top)
+				self.wfile.write("""
+					<img src="http://media.merchantcircle.com/29974860/icon-power-button%20OFF_full.gif" />
+					<h1>SenseI Portal</h1>
 				
-				<p>Welcome to the SenseI user interface portal</p>
+					<p>Welcome to the SenseI user interface portal</p>
 				
-			""")
+				""")
 
 			
-			self.wfile.write("""
+				self.wfile.write("""
 
 
 
-				<p><b>Status:</b>.</p>
+					<p><b>Status:</b>.</p>
 		
-				<p> Alarm: %s </p>
+					<p> Alarm: %s </p>
 	
 			
-			"""% alarm_message)
+				"""% alarm_message)
 
-			rows = sql.arm_status()
-			for row in rows:
-				message = ""
-				if row[1] == "Off":
-					message = "Disarmed"
-				else: 
-					message = "Armed"
-				self.wfile.write("""
-				<p> Module %s: %s </p>
-				"""%(row[0],message))
-			self.wfile.write("""			
-					<form method="POST" action="/">
-						<select name="armed">
-						<option value="True">ARM SYSTEM</option>
-						<option value="False">DISARM SYSTEM</option>
-						</select><br />	
-						<input type="submit" name="Go" />
-					</form>
-					</body>
-						</html>
-			""")
+				rows = sql.arm_status()
+				for row in rows:
+					message = ""
+					if row[1] == "Off":
+						message = "Disarmed"
+					else: 
+						message = "Armed"
+					self.wfile.write("""
+					<p> Module %s: %s </p>
+					"""%(row[0],message))
+				self.wfile.write("""			
+						<form method="POST" action="/">
+							<select name="armed">
+							<option value="True">ARM SYSTEM</option>
+							<option value="False">DISARM SYSTEM</option>
+							</select><br />	
+							<input type="submit" name="Go" />
+						</form>
+						</body>
+							</html>
+				""")
 
 		self.wfile.close()
 
 	def do_POST(self):
+		global phone_iden
 		#print self.path
 		#self.send_response(200)
 		#self.end_headers()
@@ -159,7 +180,13 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		elif self.path == '/telephone':
 			phone = form['phone'].value
 			mac = form['mac'].value
-			sql.add_number(phone,mac)
+		#	for i in range(1,ord(phone_iden)):
+		#		print form[i].value
+			if re.match(r"\d{10}\b",phone) is None:
+				print "error: Invalid Number"
+			else:
+				sql.add_number(phone_iden,phone,mac)	
+				phone_iden = chr(ord(phone_iden) + 1)
 		else:
 			sql.arm_system(form['armed'].value)
 			

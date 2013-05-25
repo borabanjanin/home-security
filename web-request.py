@@ -91,9 +91,11 @@ def send_pi_data():
 		if data['armed'] == "On":
 			port.write('t')
 			print 't'
-		else:
+		elif data['armed'] == "Off":
 			port.write('f')
 			print 'f'
+		else:
+			print "error: armed data not recognized"
 
 		if data['sensor_1'] == "None":
 			port.write('n')
