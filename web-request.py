@@ -17,7 +17,7 @@ headers = {
 data = sql.json_struct()
 
 
-#port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=3.0)
+port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=3.0)
 buf = [0]*12
 test = 0
 input_type = 0
@@ -28,6 +28,7 @@ def parse_rasp_input(size):
 	global mod_number
 	global data
 	for i in range(size):
+		print input_type
 		if input_type == 0:
 			if buf[i] == 'p':
 				port.write('p')
@@ -55,8 +56,9 @@ def parse_rasp_input(size):
 			data["slot_3"] = process_slot(buf[i])
 			input_type = input_type + 1
 		if input_type == 6:
+			print "sending server request"
 			server_request()
-			#send_pi_data()
+			send_pi_data()
 			input_type = 0
 
 def process_slot(input_char):
@@ -114,8 +116,8 @@ def send_pi_data():
 
 
 def read_port():
-	size = port.readinto(buf)
-	return size
+	buf[0] = port.read(1)
+	return 1
 
 
 def server_request():
@@ -173,10 +175,12 @@ def test_pi_coms():
 
 while run == True:	
 	try:
-		print data
+		#print data
 		#test_pi_coms()
-		time.sleep(2)
+		#time.sleep(2)
 		size = read_port()
-		parse_input(size)
+		#for i in range(size):
+		#	print buf[i]
+		parse_rasp_input(size)
 	except KeyboardInterrupt:
 		run = False
