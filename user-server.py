@@ -31,13 +31,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		top = """
 		<html>
 				<head>
-					<title>CSE 477</title>	
-					<script>
-					function redirect()
-					  {
-					  window.location.assign("localhost:8080/configure")
-					  }
-					</script>				
+				<title>CSE 477</title>	
+ 							
 				</head>
 				<body>"""
 
@@ -163,9 +158,10 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		#print self.path
 		#self.send_response(200)
 		#self.end_headers()
-		self.send_response(301)
+		self.send_response(200)
 		self.send_header('','localhost:8080')
 		self.end_headers()
+		
 
 		form = cgi.FieldStorage(
 			fp=self.rfile,
@@ -192,6 +188,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			
 #		self.wfile.write(form['his_name'].value)
 #		self.wfile.write(form['your_name'].value)
+		self.wfile.write("""<html><head>""")	
+		self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080"></head></html>""")	
 		self.wfile.close()
 
 class MyHTTPServer(SocketServer.TCPServer):
