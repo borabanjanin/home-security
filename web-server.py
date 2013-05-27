@@ -16,6 +16,7 @@ ACCOUNT_SID = "AC10980dc422a3e9684ae913c90f009188"
 AUTH_TOKEN = "ee7a9b27a18a681741fccde6f93d7d0a"
 client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 sql.create_table()
+alarm_message_sent = False	
 
 def send_text():
 	print "User Alerted"
@@ -48,8 +49,6 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		slot2 = post_data['slot_2']
 		slot3 = post_data['slot_3']
 		
-		if alarm == "On":
-			send_text()
 
 		#needs to be altered to allow for scaling
 		if sql.check_iden(post_data['iden']) == 0:
@@ -70,7 +69,15 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			post_data["sensor_7"] =	info[9]
 			post_data["sensor_8"] =	info[10]
 			
+		if alarm == "On" and post_data["armed"] == "On" and alarm_message_sent == False:
+			send_text()
+			alarm_message_sent = True
+		
 			
+		if sql.alarm_status() == 0:
+			alarm_message_sent = False
+
+
 		content = {
 			'path': self.path,
 			'data': post_data

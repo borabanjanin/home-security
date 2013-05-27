@@ -49,7 +49,7 @@ def create_user_table():
 		cur = con.cursor()  
 		cur.execute("DROP TABLE IF EXISTS UserData")
 		cur.execute("CREATE TABLE UserData(iden TEXT, number TEXT, mac TEXT);")
-
+ 
 def add_number(iden,number, mac):
 	con = sql.connect(DATABASE)
 	with con:
