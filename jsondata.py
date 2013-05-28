@@ -82,7 +82,7 @@ def arm_status():
 	con = sql.connect('sensor.db')
 	with con:
 		cur = con.cursor()    
-		cur.execute("Select iden,armed From Homesec;")
+		cur.execute("Select iden,armed,sensor1,sensor2,sensor3 From Homesec;")
 		rows = cur.fetchall()
 		con.commit()
 		return rows

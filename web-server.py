@@ -26,6 +26,7 @@ def send_text():
 		message = client.sms.messages.create(to=num[1],from_="+14253362335",body="Your house alarm has been tripped!!")
 
 class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+
 	def get_query_params_as_dict(self):
 		kv_tuples = parse_qsl(urlparse(self.path)[4])
 		result = {}    
@@ -34,6 +35,7 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		return result
 
 	def do_POST(self):
+		global alarm_message_sent
 		global created
 		self.send_response(200)
 		self.send_header("Content-type", "application/json")

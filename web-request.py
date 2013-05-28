@@ -29,6 +29,7 @@ def parse_rasp_input(size):
 	global mod_number
 	global data
 	for i in range(size):
+		print "input type " + input_type
 		if input_type == 0:
 			if buf[i] == 'p':
 				port.write('p')
@@ -58,7 +59,7 @@ def parse_rasp_input(size):
 			else:
 				print "error: improper alarm data"
 				input_type = 0
-		elif input_type == 3 or input_type == 4 or input_type == 5:
+		elif input_type == 3:
 			sensor_slot = process_slot(buf[i])
 			if "error" != sensor_slot:
 				data["slot_1"] = sensor_slot
@@ -66,20 +67,40 @@ def parse_rasp_input(size):
 			else:
 				print "error: slot type"
 				input_type = 0
+		elif input_type == 4:
+			sensor_slot = process_slot(buf[i])
+			if "error" != sensor_slot:
+				data["slot_2"] = sensor_slot
+				input_type = input_type + 1
+			else:
+				print "error: slot type"
+				input_type = 0		
+		elif input_type == 5:
+			sensor_slot = process_slot(buf[i])
+			if "error" != sensor_slot:
+				data["slot_3"] = sensor_slot
+				input_type = input_type + 1
+			else:
+				print "error: slot type"
+				input_type = 0		
 		if input_type == 6:
 			print "sending server request"
-			server_request()
-			send_pi_data()
+			#server_request()
+			#send_pi_data()
 			input_type = 0
 
 def process_slot(input_char):
 	sensor_name = ""
 	if '7' == input_char:
 		sensor_name = "None"
+	elif '6' == input_char:
+		sensor_name = "Ambient Sensor"
+	elif '1' == input_char:
+		sensor_name = "Accelerometer"
 	elif '3' == input_char:
-		sensor_name = "TestSensor"
+		sensor_name = "Motion Sensor"
 	else:
-		sensor_name = "erorr"
+		sensor_name = "error"
 	return sensor_name
 
 def send_pi_data():

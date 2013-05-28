@@ -61,6 +61,11 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 					margin: 20px;
 				}
 				
+
+				span {
+					background="green";
+				}
+
 				p {
 					padding: 0px;
 					margin: 0px;
@@ -70,6 +75,10 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 				}
 				
+				a {
+					color:gold;
+				}
+
 				body {
 					background-color: indigo;
 					background-image: linear-gradient(bottom, rgb(158,58,252) 20%, rgb(80,8,138) 60%);
@@ -142,6 +151,9 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.wfile.write("""
 				</form>
 				</body>
+				<a href="http://localhost:8080" > Home </a> <br />
+				<a href="http://localhost:8080/telephone" > Configure Users </a>
+				
 		</html>
 			""" )
 		elif self.path == '/telephone':		
@@ -162,13 +174,15 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				response += "<fieldset>"
 				#response += "<br></t>	Click to remove "
 				#response	+=	""" <input type="checkbox" name="%s" value="checked"/>  </br>""" % (num[0])
-				response += "#Phone %s" % num[0]
-				response += "</t><br><fieldset>	Phone Number: %s  </fieldset>" % (num[1])
-				response += "</t><fieldset>	Mac Address: %s </fieldset></br>" %	(num[2])
+				response += "<legend>Phone #%s </legend>" % num[0]
+				response += "</t><fieldset>	Phone Number: %s  </fieldset>" % (num[1])
+				response += "</t><fieldset>	Mac Address: %s </fieldset>" %	(num[2])
 				response += "</fieldset>"
 			self.wfile.write("""%s""" % response)
 			self.wfile.write("""<br></form></br>""")
 			self.wfile.write("""<br></body></br>""")
+			self.wfile.write("""<a href="http://localhost:8080" > Home </a><br />""")
+			self.wfile.write("""<a href="http://localhost:8080/configure" > Configure your Modules </a>""")
 			self.wfile.write("""<br></html></br>""")
 
 		else:
@@ -191,8 +205,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 			
 			self.wfile.write("""
-				<p><b>Status:</b>.</p>
-				<p> Alarm: %s </p>
+				<fieldset><legend>Status:</legend>
+				<p> Alarm: %s </p></fieldset>
 	
 			"""% alarm_message)
 
@@ -206,8 +220,9 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				else: 
 					message = "Armed"
 				self.wfile.write("""
-				<p> Module %s: %s </p>
-				"""%(row[0],message))
+				<p> <fieldset><legend>Module #%s</legend> Status: %s <br />
+					<span class="sensors">Sensor 1: %s <br /> </span>  <span class="sensors">Sensor 2:	%s <br /> </span><span class="sensors">Sensor 3: %s</span>  	</fieldset></p>
+				"""%(row[0],message,row[2],row[3],row[4]))
 			self.wfile.write("""			
 					<form method="POST" action="/">
 						<select name="armed">
@@ -216,6 +231,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 						</select><br />	
 						<input type="submit" name="Go" />
 					</form>
+					<a href="http://localhost:8080/telephone" > Configure Users </a><br />
+					<a href="http://localhost:8080/configure" > Configure your Modules </a>
 					</body>
 						</html>
 			""")
