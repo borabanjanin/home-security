@@ -29,7 +29,6 @@ def parse_rasp_input(size):
 	global mod_number
 	global data
 	for i in range(size):
-		print "input type " + input_type
 		if input_type == 0:
 			if buf[i] == 'p':
 				port.write('p')
@@ -85,8 +84,8 @@ def parse_rasp_input(size):
 				input_type = 0		
 		if input_type == 6:
 			print "sending server request"
-			#server_request()
-			#send_pi_data()
+			server_request()
+			send_pi_data()
 			input_type = 0
 
 def process_slot(input_char):
