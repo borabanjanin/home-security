@@ -29,6 +29,7 @@ def parse_rasp_input(size):
 	global mod_number
 	global data
 	for i in range(size):
+		print buf[i]
 		if input_type == 0:
 			if buf[i] == 'p':
 				port.write('p')
@@ -242,7 +243,8 @@ while run == True:
 		run = False
 	except:
 		#input_type = 0
-		#pass
+		pass
 		print "what"
 	else:
 		print "Some Error Keep Running!!!"
+		pass
