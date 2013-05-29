@@ -10,7 +10,7 @@ import serial
 run = True
 mod_number = "1"
 server = 'http://192.168.1.3:8090'
-server = 'http://localhost:8090'
+#server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
   }
@@ -219,16 +219,16 @@ def test_pi_coms():
 	buf[1] = chr(ord(char) + 1)
 	char = chr(ord(char) + 1)
 	buf[2] = 'f'
-	buf[3] = 'n'
-	buf[4] = 'n'
-	buf[5] = 'n'
+	buf[3] = '7'
+	buf[4] = '7'
+	buf[5] = '7'
 	#parse_rasp_input(6)
 	buf[6] = 'u'
 	buf[7] = '1'
 	buf[8] = 'f'
-	buf[9] = 'n'
-	buf[10] = 'n'
-	buf[11] = 'n'
+	buf[9] = '7'
+	buf[10] = '7'
+	buf[11] = '7'
 	parse_rasp_input(12)
 
 
@@ -241,10 +241,10 @@ while run == True:
 		parse_rasp_input(size)
 	except KeyboardInterrupt:
 		run = False
-	except:
+	#except:
 		#input_type = 0
-		pass
-		print "what"
-	else:
-		print "Some Error Keep Running!!!"
-		pass
+		#pass
+		#print "what"
+	#else:
+		#print "Some Error Keep Running!!!"
+		#pass
