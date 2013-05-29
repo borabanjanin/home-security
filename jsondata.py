@@ -78,11 +78,31 @@ def alarm_status():
 		con.commit()
 		return len(rows)
 
+def alarm_status_module(iden):
+	con = sql.connect('sensor.db')
+	with con:
+		cur = con.cursor()    
+		cur.execute("Select iden,alarm From Homesec WHERE iden=?",(iden))
+		row = cur.fetchone()
+		con.commit()
+		print row
+		return row
+
+def alarm_system(status):
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()
+		if status == "On":
+			cur.execute("UPDATE Homesec SET alarm=\"On\"")	
+		else:
+			cur.execute("UPDATE Homesec SET alarm=\"Off\"")
+		con.commit()
+
 def arm_status():
 	con = sql.connect('sensor.db')
 	with con:
 		cur = con.cursor()    
-		cur.execute("Select iden,armed,sensor1,sensor2,sensor3 From Homesec;")
+		cur.execute("Select iden,armed,slot1,slot2,slot3 From Homesec;")
 		rows = cur.fetchall()
 		con.commit()
 		return rows
@@ -209,8 +229,8 @@ def test_database():
 	#row =	pull_iden("25")
 	#print row[1]
 	#print check_iden("0")
-	create_user_table()
-	
+	#create_user_table()
+	print arm_status()
 
 if __name__ == "__main__":
 	test_database()

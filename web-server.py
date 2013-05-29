@@ -44,9 +44,13 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		post_data_str = self.rfile.read(content_len)
 		post_data = json.loads(post_data_str)
 		
-		
+
 		iden = post_data['iden']
-		alarm = post_data['alarm']
+		if sql.alarm_status() == 0:
+			alarm = post_data['alarm']	
+		else:
+			row = sql.alarm_status_module(iden);
+			alarm = row[1]
 		slot1 = post_data['slot_1']
 		slot2 = post_data['slot_2']
 		slot3 = post_data['slot_3']

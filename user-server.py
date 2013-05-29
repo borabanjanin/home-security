@@ -275,6 +275,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080/telephone"></head></html>""")	
 		else:
 			sql.arm_system(form['armed'].value)
+			if 0 != sql.alarm_status():
+				sql.alarm_system(form['armed'].value)
 			self.wfile.write("""<html><head>""")	
 			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080"></head></html>""")	
 			
