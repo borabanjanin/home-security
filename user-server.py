@@ -306,13 +306,20 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		else:
 			sql.arm_system(form['armed'].value)
 			if form['user'].value == "False":
-				sql.user_tracker('False')
+				sql.user_tracker("False")
 			elif form['user'].value == "True":
-				sql.user_tracker('True')
+				sql.user_tracker("True")
 			else:
 				print "not putting in values"
 			if 0 != sql.alarm_status():
-				sql.alarm_system(form['armed'].value)
+				if form['armed'].value == "True":
+					sql.alarm_system("On")
+					sql.user_message_status("True")
+				elif form['armed'].value == "False":
+					sql.alarm_system("Off")
+					sql.user_message_status("False")				
+				else:
+					print "error parsing post arm status"
 			self.wfile.write("""<html><head>""")	
 			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080"></head></html>""")	
 			

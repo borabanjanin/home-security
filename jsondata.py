@@ -65,8 +65,8 @@ def create_user_home():
 	with con:
 		cur = con.cursor()  
 		cur.execute("DROP TABLE IF EXISTS UserHome")
-		cur.execute("CREATE TABLE UserHome(found TEXT, tracker TEXT);")
-		cur.execute("INSERT INTO UserHome VALUES('False','False');")
+		cur.execute("CREATE TABLE UserHome(found TEXT, tracker TEXT, message TEXT);")
+		cur.execute("INSERT INTO UserHome VALUES('False','False','False');")
 
 def update_user_home(found):
 	con = sql.connect(DATABASE)
@@ -83,12 +83,38 @@ def user_tracker(status):
 	con = sql.connect(DATABASE)
 	with con:
 		cur = con.cursor()  
-		if status == 'True':
+		if status == "True":
 			cur.execute("UPDATE UserHome SET tracker=\"True\"")	
-		elif status == 'False':
+		elif status == "False":
 			cur.execute("UPDATE UserHome SET tracker=\"False\"")
 		else:
 			print "Failure to Insert Tracker"
+
+def user_message_status(status):
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()  
+		if status == "True":
+			cur.execute("UPDATE UserHome SET message=\"True\"")	
+		elif status == "False":
+			cur.execute("UPDATE UserHome SET message=\"False\"")
+		else:
+			print "Failure to Insert Message"
+
+def user_message():
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()  
+		cur.execute("Select message From Userhome;")
+		row = cur.fetchone()
+		if row[0] == "False":
+			return 0
+		elif row[0] == "True":
+			return 1
+		else:
+			print "error reading message from Userhome"
+		
+
 
 def user_home_status():
 	con = sql.connect(DATABASE) 
@@ -150,8 +176,10 @@ def alarm_system(status):
 		cur = con.cursor()
 		if status == "On":
 			cur.execute("UPDATE Homesec SET alarm=\"On\"")	
-		else:
+		elif status == "Off":
 			cur.execute("UPDATE Homesec SET alarm=\"Off\"")
+		else:
+			print "error updating system alarm"
 		con.commit()
 
 def arm_status():
@@ -296,7 +324,7 @@ def test_database():
 	#print row[1]
 	#print check_iden("0")
 	#create_user_table()
-	update_user_home(False)
+	user_message()
 
 
 if __name__ == "__main__":

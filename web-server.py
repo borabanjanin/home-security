@@ -49,13 +49,6 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 		iden = post_data['iden']
 		alarm = post_data['alarm']
-		#if sql.alarm_status() == 0:
-		#	alarm = post_data['alarm']	
-		#else:
-		#	print "iden we are pulling " + iden
-		#	row = sql.alarm_status_module(iden);
-		#	print row
-		#	alarm = row[1]
 
 
 		slot1 = post_data['slot_1']
@@ -73,13 +66,20 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			print "created" + post_data['iden']
 			sql.create_module(iden, "Off", alarm, "None", "None", "None", "None", "None", "None", "None", "None", slot1, slot2, slot3)
 		else:
+			
+			if sql.alarm_status() == 0:
+				alarm = post_data['alarm']	
+			else:
+				row = sql.alarm_status_module(iden);
+				alarm = row[1]
+
 			sql.update_module_pi(iden, alarm, slot1, slot2, slot3)
 			info = sql.pull_iden(iden)
 			numbers = sql.fetch_numbers()
 			list_num = []
 			for num in numbers:
 				list_num.append(num[2])
-				if num[2] not in post_data['mac_address']:
+				if num[2] not in post_data['mac_address'] and num[2] != 'default':
 					post_data['mac_address'].append(num[2])
 			for address in post_data['mac_address']:
 				if address not in list_num:
@@ -98,16 +98,16 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			post_data["sensor_7"] =	info[9]
 			post_data["sensor_8"] =	info[10]
 
-			
-		if alarm == "On" and post_data["armed"] == "On" and alarm_message_sent == False:
+		
+		if sql.alarm_status() == 0:
+			sql.user_message_status("False")
+	
+		if alarm == "On" and post_data["armed"] == "On" and sql.user_message() == 0:
 			user_tracker = sql.user_home_status()
 			if user_tracker[0] == "False" and user_tracker[1] == "True":
 				send_text()
-				alarm_message_sent = True
+				sql.user_message_status("True")
 		
-			
-		if sql.alarm_status() == 0:
-			alarm_message_sent = False
 
 
 		content = {

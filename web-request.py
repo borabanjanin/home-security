@@ -215,23 +215,23 @@ char = '0'
 def test_pi_coms():
 	global buf
 	global char
-	buf[0] = 'p'
-	parse_rasp_input(1)
+	#buf[0] = 'p'
+	#parse_rasp_input(1)
+	#buf[0] = 'u'
+	#buf[1] = chr(ord(char) + 1)
+	#char = chr(ord(char) + 1)
+	#buf[2] = 't'
+	#buf[3] = '7'
+	#buf[4] = '7'
+	#buf[5] = '7'
+	#parse_rasp_input(6)
 	buf[0] = 'u'
-	buf[1] = chr(ord(char) + 1)
-	char = chr(ord(char) + 1)
+	buf[1] = '1'
 	buf[2] = 't'
 	buf[3] = '7'
 	buf[4] = '7'
 	buf[5] = '7'
-	#parse_rasp_input(6)
-	buf[6] = 'u'
-	buf[7] = '1'
-	buf[8] = 't'
-	buf[9] = '7'
-	buf[10] = '7'
-	buf[11] = '7'
-	parse_rasp_input(12)
+	parse_rasp_input(6)
 
 def user_check():
 	for address in data['mac_address']:
@@ -239,7 +239,8 @@ def user_check():
 			return True
 	return False
 			
-
+buf[0] = 'p'
+parse_rasp_input(1)
 while run == True:	
 	try:
 		time.sleep(2)
