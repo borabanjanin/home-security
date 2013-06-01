@@ -16,6 +16,7 @@ ACCOUNT_SID = "AC10980dc422a3e9684ae913c90f009188"
 AUTH_TOKEN = "ee7a9b27a18a681741fccde6f93d7d0a"
 client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 sql.create_table()
+sql.create_user_table()
 sql.create_user_home()
 alarm_message_sent = False	
 
@@ -50,12 +51,21 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		if sql.alarm_status() == 0:
 			alarm = post_data['alarm']	
 		else:
+			print "iden we are pulling"
 			row = sql.alarm_status_module(iden);
+			print row
 			alarm = row[1]
+
+
 		slot1 = post_data['slot_1']
 		slot2 = post_data['slot_2']
 		slot3 = post_data['slot_3']
-		
+		if post_data['user_home'] == "False":
+			sql.update_user_home('False')
+		elif post_data['user_home'] == "True":
+			sql.update_user_home('True')
+		else:
+			print "error in inserting"
 
 		#needs to be altered to allow for scaling
 		if sql.check_iden(post_data['iden']) == 0:
@@ -63,8 +73,19 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			sql.create_module(iden, "Off", alarm, "None", "None", "None", "None", "None", "None", "None", "None", slot1, slot2, slot3)
 		else:
 			sql.update_module_pi(iden, alarm, slot1, slot2, slot3)
-			#print iden
 			info = sql.pull_iden(iden)
+			numbers = sql.fetch_numbers()
+			list_num = []
+			for num in numbers:
+				list_num.append(num[2])
+				if num[2] not in post_data['mac_address']:
+					post_data['mac_address'].append(num[2])
+			for address in post_data['mac_address']:
+				if address not in list_num:
+					post_data['mac_address'].remove(address)
+
+			
+
 			#print info
 			post_data["armed"] = info[1]
 			post_data["sensor_1"] = info[3]
@@ -75,10 +96,13 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			post_data["sensor_6"] =	info[8]
 			post_data["sensor_7"] =	info[9]
 			post_data["sensor_8"] =	info[10]
+
 			
 		if alarm == "On" and post_data["armed"] == "On" and alarm_message_sent == False:
-			send_text()
-			alarm_message_sent = True
+			user_tracker = sql.user_home_status()
+			if user_tracker[0] == "False" and user_tracker[1] == "True":
+				send_text()
+				alarm_message_sent = True
 		
 			
 		if sql.alarm_status() == 0:
@@ -97,7 +121,7 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 class MyWebServer(SocketServer.TCPServer):
 	allow_reuse_address = True
 	
-httpd = MyWebServer(('192.168.1.3', PORT), MyWebHandler)
+httpd = MyWebServer(('localhost', PORT), MyWebHandler)
 print('serving at port %d' % PORT)
 
 try:

@@ -25,6 +25,7 @@ def json_struct():
 		"slot_2":"None",
 		"slot_3":"None",
 		"user_home":"False",
+		"mac_address":[],
 	}
 	#data = json.loads(data)
 	return data
@@ -64,20 +65,40 @@ def create_user_home():
 	with con:
 		cur = con.cursor()  
 		cur.execute("DROP TABLE IF EXISTS UserHome")
-		cur.execute("CREATE TABLE UserHome(found TEXT);")
-		cur.execute("INSERT INTO UserHome VALUES('False');")
+		cur.execute("CREATE TABLE UserHome(found TEXT, tracker TEXT);")
+		cur.execute("INSERT INTO UserHome VALUES('False','False');")
 
 def update_user_home(found):
 	con = sql.connect(DATABASE)
 	with con:
 		cur = con.cursor()  
-		if found == True:
+		if found == 'True':
 			cur.execute("UPDATE UserHome SET found=\"True\"")	
-		elif found == False:
+		elif found == 'False':
 			cur.execute("UPDATE UserHome SET found=\"False\"")
 		else:
-			print "Failure to Insert"
+			print "Failure to Insert Found"
  
+def user_tracker(status):
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()  
+		if status == 'True':
+			cur.execute("UPDATE UserHome SET tracker=\"True\"")	
+		elif status == 'False':
+			cur.execute("UPDATE UserHome SET tracker=\"False\"")
+		else:
+			print "Failure to Insert Tracker"
+
+def user_home_status():
+	con = sql.connect(DATABASE) 
+	with con:
+		cur = con.cursor()
+		cur.execute("SELECT * FROM UserHome")
+		row = cur.fetchone()
+		return row
+
+
 def add_number(iden,number, mac):
 	con = sql.connect(DATABASE)
 	with con:
@@ -142,6 +163,15 @@ def arm_status():
 		con.commit()
 		return rows
 
+def arm_system_status():
+	con = sql.connect('sensor.db')
+	with con:
+		cur = con.cursor()    
+		cur.execute("Select iden,armed From Homesec where armed=\"On\";")
+		row = cur.fetchone()
+		con.commit()
+		return row
+
 def arm_system(status):
 	con = sql.connect(DATABASE)
 	with con:
@@ -199,6 +229,7 @@ def user_server_config(iden, config1, config2, config3):
 		cur.execute("UPDATE Homesec SET alarm=? WHERE iden=?",(config2, iden))	
 		cur.execute("UPDATE Homesec SET armed=? WHERE iden=?",(config3, iden))
 		con.commit()
+
 
 def check_iden(iden):
 	con = sql.connect('sensor.db')
@@ -265,7 +296,8 @@ def test_database():
 	#print row[1]
 	#print check_iden("0")
 	#create_user_table()
-	print arm_status()
+	update_user_home(False)
+
 
 if __name__ == "__main__":
 	test_database()

@@ -16,6 +16,7 @@ PORT = 8080
 #sql.create_table()
 #sql.create_module("0", "false", "false", "none", "none", "none", "255", "255", "255")
 sql.create_user_table()
+sql.create_user_home()
 phone_iden = "1"
 
 class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
@@ -190,10 +191,17 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 		else:
 			alarm_message = ""
-			if sql.alarm_status() == 0:
+			user_tracker = sql.user_home_status()
+			print sql.arm_system_status()
+			if sql.alarm_status() == 0 or sql.arm_system_status() == None:
 				alarm_message = "OFF"
 			else:
-				alarm_message = "Tripped"
+				if user_tracker[1] == 'True' and user_tracker[0] == 'True':
+					alarm_message = "OFF"
+				else:
+					alarm_message = "Tripped"
+
+				
 
 			self.send_response(200)
 			self.send_header("Content-type", "text/html")
@@ -205,13 +213,24 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			
 				<h2>Welcome to the SenseI user interface portal</h2><br />
 			""")
-
+		
 			
+			user_message = ""
+			if user_tracker[0] == "True" and user_tracker[1] == "True":
+				user_message = "Phone: Detected"
+			elif user_tracker[0] == "False" and user_tracker[1] == "True":
+				user_message = "Phone: Not Detected"
+			elif user_tracker[1] == "False":
+				user_message = "Auto Track Disabled"
+			else:
+				print "error determining status of user"
 			self.wfile.write("""
 				<fieldset><legend>Status:</legend>
-				<p> Alarm: %s </p></fieldset>
+				<p> Alarm: %s <br />
+					%s	
+			</p></fieldset>
 	
-			"""% alarm_message)
+			"""% (alarm_message, user_message))
 
 			rows = sql.arm_status()
 			if not rows:
@@ -231,6 +250,10 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 						<select name="armed">
 						<option value="True">ARM SYSTEM</option>
 						<option value="False">DISARM SYSTEM</option>
+						</select><br />	
+						<select name="user">
+						<option value="True">ENABLE AUTO TRACK</option>
+						<option value="False">DISABLE AUTO TRACK</option>
 						</select><br />	
 						<input type="submit" name="Go" />
 					</form>
@@ -282,6 +305,12 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080/telephone"></head></html>""")	
 		else:
 			sql.arm_system(form['armed'].value)
+			if form['user'].value == "False":
+				sql.user_tracker('False')
+			elif form['user'].value == "True":
+				sql.user_tracker('True')
+			else:
+				print "not putting in values"
 			if 0 != sql.alarm_status():
 				sql.alarm_system(form['armed'].value)
 			self.wfile.write("""<html><head>""")	

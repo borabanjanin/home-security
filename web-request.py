@@ -5,12 +5,13 @@ import requests
 import jsondata as sql
 import time
 import serial
+import homescan
 
 
 run = True
 mod_number = "1"
-server = 'http://192.168.1.3:8090'
-#server = 'http://localhost:8090'
+#server = 'http://192.168.1.3:8090'
+server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
   }
@@ -18,7 +19,7 @@ headers = {
 data = sql.json_struct()
 
 
-port = serial.Serial("/dev/ttyAMA0", baudrate=9600)
+#port = serial.Serial("/dev/ttyAMA0", baudrate=9600)
 buf = [0]*12
 test = 0
 input_type = 0
@@ -33,8 +34,8 @@ def parse_rasp_input(size):
 		if input_type == 0:
 			if buf[i] == 'p':
 				print 'p'
-				port.write('p')
-				port.write(mod_number)
+				#port.write('p')
+				#port.write(mod_number)
 				modules_created.append(mod_number)
 				mod_number = chr(ord(mod_number) + 1)
 				input_type = 0
@@ -87,7 +88,7 @@ def parse_rasp_input(size):
 		if input_type == 6:
 			print "sending server request"
 			server_request()
-			send_pi_data()
+			#send_pi_data()
 			input_type = 0
 
 def process_slot(input_char):
@@ -183,7 +184,7 @@ def server_request():
 	response = requests.post('%s/endpoint' % server, data=json.dumps(data), headers=headers)
 	response_str = response.text
 	packet = json.loads(response_str)
-	#data = packet['data']
+	data = packet['data']
 	#print data
 	if response.status_code == requests.codes.OK:
 		print('Response: HTTP %s' % response.status_code)
@@ -226,20 +227,29 @@ def test_pi_coms():
 	#parse_rasp_input(6)
 	buf[6] = 'u'
 	buf[7] = '1'
-	buf[8] = 'f'
+	buf[8] = 't'
 	buf[9] = '7'
 	buf[10] = '7'
 	buf[11] = '7'
 	parse_rasp_input(12)
 
+def user_check():
+	for address in data['mac_address']:
+		if homescan.search_network(address) == True:		
+			return True
+	return False
+			
 
 while run == True:	
 	try:
-		#print data
-		#test_pi_coms()
-		#time.sleep(2)
-		size = read_port()
-		parse_rasp_input(size)
+		time.sleep(2)
+		#data['user_home'] = user_check()
+		test_pi_coms()
+		#size = read_port()
+		#parse_rasp_input(size)
+		server_request()
+		print data
+		
 	except KeyboardInterrupt:
 		run = False
 	#except:
