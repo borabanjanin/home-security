@@ -24,6 +24,7 @@ def json_struct():
 		"slot_1":"None",
 		"slot_2":"None",
 		"slot_3":"None",
+		"user_home":"False",
 	}
 	#data = json.loads(data)
 	return data
@@ -57,6 +58,25 @@ def create_user_table():
 		cur = con.cursor()  
 		cur.execute("DROP TABLE IF EXISTS UserData")
 		cur.execute("CREATE TABLE UserData(iden TEXT, number TEXT, mac TEXT);")
+
+def create_user_home():
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()  
+		cur.execute("DROP TABLE IF EXISTS UserHome")
+		cur.execute("CREATE TABLE UserHome(found TEXT);")
+		cur.execute("INSERT INTO UserHome VALUES('False');")
+
+def update_user_home(found):
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()  
+		if found == True:
+			cur.execute("UPDATE UserHome SET found=\"True\"")	
+		elif found == False:
+			cur.execute("UPDATE UserHome SET found=\"False\"")
+		else:
+			print "Failure to Insert"
  
 def add_number(iden,number, mac):
 	con = sql.connect(DATABASE)

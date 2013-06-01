@@ -16,6 +16,7 @@ ACCOUNT_SID = "AC10980dc422a3e9684ae913c90f009188"
 AUTH_TOKEN = "ee7a9b27a18a681741fccde6f93d7d0a"
 client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 sql.create_table()
+sql.create_user_home()
 alarm_message_sent = False	
 
 def send_text():
