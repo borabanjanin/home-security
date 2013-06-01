@@ -244,7 +244,7 @@ parse_rasp_input(1)
 while run == True:	
 	try:
 		time.sleep(2)
-		#data['user_home'] = user_check()
+		data['user_home'] = user_check()
 		test_pi_coms()
 		#size = read_port()
 		#parse_rasp_input(size)

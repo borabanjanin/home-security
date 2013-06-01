@@ -54,9 +54,9 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		slot1 = post_data['slot_1']
 		slot2 = post_data['slot_2']
 		slot3 = post_data['slot_3']
-		if post_data['user_home'] == "False":
+		if post_data['user_home'] == False:
 			sql.update_user_home('False')
-		elif post_data['user_home'] == "True":
+		elif post_data['user_home'] == True:
 			sql.update_user_home('True')
 		else:
 			print "error in inserting"

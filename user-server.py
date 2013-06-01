@@ -218,6 +218,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			user_message = ""
 			if user_tracker[0] == "True" and user_tracker[1] == "True":
 				user_message = "Phone: Detected"
+				sql.alarm_system("Off")
+				sql.user_message_status("False")	
 			elif user_tracker[0] == "False" and user_tracker[1] == "True":
 				user_message = "Phone: Not Detected"
 			elif user_tracker[1] == "False":
@@ -314,7 +316,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			if 0 != sql.alarm_status():
 				if form['armed'].value == "True":
 					sql.alarm_system("On")
-					sql.user_message_status("True")
+					sql.user_message_status("False")
 				elif form['armed'].value == "False":
 					sql.alarm_system("Off")
 					sql.user_message_status("False")				
