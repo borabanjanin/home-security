@@ -36,6 +36,7 @@ def parse_rasp_input(size):
 				print 'p'
 				port.write('p')
 				port.write(mod_number)
+				print mod_number
 				modules_created.append(mod_number)
 				mod_number = chr(ord(mod_number) + 1)
 				input_type = 0
@@ -96,7 +97,7 @@ def process_slot(input_char):
 	sensor_name = ""
 	if '7' == input_char:
 		sensor_name = "None"
-	elif '6' == input_char:
+	elif '5' == input_char:
 		sensor_name = "Ambient Sensor"
 	elif '1' == input_char:
 		sensor_name = "Accelerometer"
@@ -172,12 +173,12 @@ def send_pi_data():
 
 def read_port():
 	buf[0] = port.read(1)
-	buf[1] = port.read(1)
-	buf[2] = port.read(1)
-	buf[3] = port.read(1)
-	buf[4] = port.read(1)
-	buf[5] = port.read(1)
-	return 6
+#	buf[1] = port.read(1)
+#	buf[2] = port.read(1)
+#	buf[3] = port.read(1)
+#	buf[4] = port.read(1)
+#	buf[5] = port.read(1)
+	return 1
 
 
 def server_request():
@@ -216,8 +217,8 @@ char = '0'
 def test_pi_coms():
 	global buf
 	global char
-	#buf[0] = 'p'
-	#parse_rasp_input(1)
+	buf[0] = 'p'
+	parse_rasp_input(1)
 	#buf[0] = 'u'
 	#buf[1] = chr(ord(char) + 1)
 	#char = chr(ord(char) + 1)
@@ -240,15 +241,15 @@ def user_check():
 			return True
 	return False
 			
-buf[0] = 'p'
-parse_rasp_input(1)
+#buf[0] = 'p'
+#parse_rasp_input(1)
 while run == True:	
 	try:
-		time.sleep(2)
+		#time.sleep(2)
 		#test_pi_coms()
 		size = read_port()
 		parse_rasp_input(size)
-		print data
+		#print data
 		
 	except KeyboardInterrupt:
 		run = False
