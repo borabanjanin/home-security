@@ -245,6 +245,7 @@ while run == True:
 	try:
 		time.sleep(2)
 		data['user_home'] = user_check()
+		print data['user_home']
 		test_pi_coms()
 		#size = read_port()
 		#parse_rasp_input(size)
