@@ -220,7 +220,7 @@ def test_pi_coms():
 	buf[0] = 'u'
 	buf[1] = chr(ord(char) + 1)
 	char = chr(ord(char) + 1)
-	buf[2] = 'f'
+	buf[2] = 't'
 	buf[3] = '7'
 	buf[4] = '7'
 	buf[5] = '7'

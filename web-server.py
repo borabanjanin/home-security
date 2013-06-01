@@ -48,13 +48,14 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		
 
 		iden = post_data['iden']
-		if sql.alarm_status() == 0:
-			alarm = post_data['alarm']	
-		else:
-			print "iden we are pulling"
-			row = sql.alarm_status_module(iden);
-			print row
-			alarm = row[1]
+		alarm = post_data['alarm']
+		#if sql.alarm_status() == 0:
+		#	alarm = post_data['alarm']	
+		#else:
+		#	print "iden we are pulling " + iden
+		#	row = sql.alarm_status_module(iden);
+		#	print row
+		#	alarm = row[1]
 
 
 		slot1 = post_data['slot_1']
