@@ -170,11 +170,14 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.wfile.write("""<br><input type="submit" name="Go" /></br>""")
 			response = "<br>Numbers Already entered: </br>"
 			numbers = sql.fetch_numbers()
+			visual_number = 0
 			for num in numbers:
+				visual_number = visual_number + 1
 				response += "<fieldset>"
-				#response += "<br></t>	Click to remove "
-				#response	+=	""" <input type="checkbox" name="%s" value="checked"/>  </br>""" % (num[0])
-				response += "<legend>Phone #%s </legend>" % num[0]
+				response += "<br></t>	Click to remove "
+				response	+=	""" <input type="checkbox" name="%s" id="checkbox_id" value="value" />""" % (num[0])
+									#<label for="%s">what</label>""" % (num[0])
+				response += "<legend>Phone #%s </legend>" % visual_number
 				response += "</t><fieldset>	Phone Number: %s  </fieldset>" % (num[1])
 				response += "</t><fieldset>	Mac Address: %s </fieldset>" %	(num[2])
 				response += "</fieldset>"
@@ -258,7 +261,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		if self.path == '/configure': 
 			iden = form['iden'].value
 			arm = form['armed'].value
-			sql.arm_module(iden,arm)
+			sql.arm_module(iden,arm) 
 			self.wfile.write("""<html><head>""")	
 			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080/configure"></head></html>""")	
 		elif self.path == '/telephone':
@@ -271,6 +274,10 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			else:
 				sql.add_number(phone_iden,phone,mac)	
 				phone_iden = chr(ord(phone_iden) + 1)
+			numbers = sql.fetch_numbers()
+			for num in numbers:
+				if num[0] in form:
+					sql.delete_number(num[0])
 			self.wfile.write("""<html><head>""")	
 			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080/telephone"></head></html>""")	
 		else:

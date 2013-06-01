@@ -32,6 +32,7 @@ def parse_rasp_input(size):
 		print buf[i]
 		if input_type == 0:
 			if buf[i] == 'p':
+				print 'p'
 				port.write('p')
 				port.write(mod_number)
 				modules_created.append(mod_number)

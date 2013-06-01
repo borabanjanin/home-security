@@ -36,6 +36,14 @@ def create_module(iden, armed, alarm, sen1, sen2, sen3, sen4, sen5, sen6, sen7, 
 		query = "INSERT INTO Homesec VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');" % (iden, armed, alarm, sen1, sen2, sen3, sen4, sen5, sen6, sen7, sen8, slot1, slot2, slot3)
 		cur.execute(query)
 
+def delete_module(iden):
+	con = sql.connect(DATABASE) 
+	with con:
+		cur = con.cursor()
+		cur.execute("Delete from homesec where iden=?;",(iden))
+		con.commit()
+
+
 def create_table():
 	con = sql.connect(DATABASE)
 	with con:
@@ -66,8 +74,15 @@ def fetch_numbers():
 		rows = cur.fetchall()
 		for row in rows:		
 			print "%s" % (row[0])
-			
  		return rows
+
+def delete_number(iden):
+	con = sql.connect(DATABASE) 
+	with con:
+		cur = con.cursor()
+		cur.execute("Delete from userdata where iden=?;",(iden))
+		con.commit()
+
 
 def alarm_status():
 	con = sql.connect('sensor.db')
