@@ -10,8 +10,8 @@ import homescan
 
 run = True
 mod_number = "1"
-#server = 'http://192.168.1.3:8090'
-server = 'http://localhost:8090'
+server = 'http://192.168.1.3:8090'
+#server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
   }
@@ -19,7 +19,7 @@ headers = {
 data = sql.json_struct()
 
 
-#port = serial.Serial("/dev/ttyAMA0", baudrate=9600)
+port = serial.Serial("/dev/ttyAMA0", baudrate=9600)
 buf = [0]*12
 test = 0
 input_type = 0
@@ -34,8 +34,8 @@ def parse_rasp_input(size):
 		if input_type == 0:
 			if buf[i] == 'p':
 				print 'p'
-				#port.write('p')
-				#port.write(mod_number)
+				port.write('p')
+				port.write(mod_number)
 				modules_created.append(mod_number)
 				mod_number = chr(ord(mod_number) + 1)
 				input_type = 0
@@ -87,8 +87,9 @@ def parse_rasp_input(size):
 				input_type = 0		
 		if input_type == 6:
 			print "sending server request"
+			data['user_home'] = user_check()
 			server_request()
-			#send_pi_data()
+			send_pi_data()
 			input_type = 0
 
 def process_slot(input_char):
@@ -244,12 +245,9 @@ parse_rasp_input(1)
 while run == True:	
 	try:
 		time.sleep(2)
-		data['user_home'] = user_check()
-		print data['user_home']
-		test_pi_coms()
-		#size = read_port()
-		#parse_rasp_input(size)
-		server_request()
+		#test_pi_coms()
+		size = read_port()
+		parse_rasp_input(size)
 		print data
 		
 	except KeyboardInterrupt:
