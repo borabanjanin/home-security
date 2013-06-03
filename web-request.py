@@ -10,8 +10,8 @@ import homescan
 
 run = True
 mod_number = "1"
-server = 'http://10.249.41.39:8090'
-#server = 'http://localhost:8090'
+#server = 'http://10.249.41.39:8090'
+server = 'http://localhost:8090'
 headers = {
   'Accept': 'application/json'
   }
@@ -245,10 +245,10 @@ def user_check():
 #parse_rasp_input(1)
 while run == True:	
 	try:
-		#time.sleep(2)
-		test_pi_coms()
-		#size = read_port()
-		#parse_rasp_input(size)
+		time.sleep(2)
+		#test_pi_coms()
+		size = read_port()
+		parse_rasp_input(size)
 		#print data
 		
 	except KeyboardInterrupt:
