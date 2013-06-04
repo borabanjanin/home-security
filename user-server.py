@@ -12,7 +12,7 @@ import re
 import subprocess
 import jsondata as sql
 
-PORT = 8080
+PORT = 80
 #sql.create_table()
 #sql.create_module("0", "false", "false", "none", "none", "none", "255", "255", "255")
 sql.create_user_table()
@@ -174,8 +174,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.wfile.write("""
 					</form>
 					</body>
-					<a href="http://localhost:8080" > Home </a> <br />
-					<a href="http://localhost:8080/telephone" > Configure Users </a>
+					<a href="http://senseihome.com" > Home </a> <br />
+					<a href="http://senseihome.com/telephone" > Configure Users </a>
 				
 			</html>
 				""" )
@@ -207,8 +207,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.wfile.write("""%s""" % response)
 			self.wfile.write("""<br></form></br>""")
 			self.wfile.write("""<br></body></br>""")
-			self.wfile.write("""<a href="http://localhost:8080" > Home </a><br />""")
-			self.wfile.write("""<a href="http://localhost:8080/configure" > Configure your Modules </a>""")
+			self.wfile.write("""<a href="http://senseihome.com" > Home </a><br />""")
+			self.wfile.write("""<a href="http://senseihome.com/configure" > Configure your Modules </a>""")
 			self.wfile.write("""<br></html></br>""")
 
 		else:
@@ -282,8 +282,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 						</select><br />	
 						<input type="submit" name="Go" />
 					</form>
-					<a href="http://localhost:8080/telephone" > Configure Users </a><br />
-					<a href="http://localhost:8080/configure" > Configure your Modules </a>
+					<a href="http://senseihome.com/telephone" > Configure Users </a><br />
+					<a href="http://senseihome.com/configure" > Configure your Modules </a>
 					</body>
 						</html>
 			""")
@@ -315,7 +315,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			configure5 = form["config_5"].value
 			sql.insert_config(iden,configure1,configure3,configure5)
 			self.wfile.write("""<html><head>""")	
-			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080/configure"></head></html>""")	
+			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://senseihome.com/configure"></head></html>""")	
 		elif self.path == '/telephone':
 			phone = form['phone'].value
 			mac = form['mac'].value
@@ -331,7 +331,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				if num[0] in form:
 					sql.delete_number(num[0])
 			self.wfile.write("""<html><head>""")	
-			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080/telephone"></head></html>""")	
+			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://senseihome.com/telephone"></head></html>""")	
 		else:
 			sql.arm_system(form['armed'].value)
 			if form['user'].value == "False":
@@ -350,7 +350,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				else:
 					print "error parsing post arm status"
 			self.wfile.write("""<html><head>""")	
-			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080"></head></html>""")	
+			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://senseihome.com"></head></html>""")	
 			
 #		self.wfile.write(form['his_name'].value)
 #		self.wfile.write(form['your_name'].value)
