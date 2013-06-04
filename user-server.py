@@ -123,7 +123,6 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.end_headers()
 
 		elif self.path == '/configure':
-			
 			self.send_response(200)
 			self.send_header("Content-type", "text/html")
 			self.end_headers()
@@ -135,28 +134,46 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			rows = sql.fetch_idens()
 			if not rows:
 				print "hit"
-				self.wfile.write("""<br>No Modules Detected</br>""")
-			self.wfile.write("""<form method="POST">""")
-			self.wfile.write("""	<fieldset>""")
+				self.wfile.write("""<br><b>No Modules Detected To Configure</b></br>""")
+				self.wfile.write("""<br><b</b></br>""")
+			self.wfile.write("""<fieldset>""")
 			self.wfile.write("""		<legend>System </legend>""")
-			self.wfile.write("""		<select name="iden">""")
 			for row in rows:
-				self.wfile.write("""			<option value="%s"> Module %s</option>"""%(row[0],row[0]))
-			self.wfile.write("""		</select><br />""")	
-			self.wfile.write("""		<select name="armed">""")
-			self.wfile.write("""			<option value="On"> Arm </option>""")
-			self.wfile.write("""			<option value="Off"> Disarm </option>""")
-			self.wfile.write("""		</select>""")
-			self.wfile.write("""</fieldset><br />""")
-			self.wfile.write("""<input type="submit" name="Go" onclick="redirect()"/>""")
-			self.wfile.write("""
-				</form>
-				</body>
-				<a href="http://localhost:8080" > Home </a> <br />
-				<a href="http://localhost:8080/telephone" > Configure Users </a>
 				
-		</html>
-			""" )
+				self.wfile.write("""		<select name="iden">""")
+				self.wfile.write("""			<option value="%s"> Module %s</option>"""%(rows[0],rows[0]))
+				self.wfile.write("""		</select><br />""")	
+
+			if rows:
+				self.wfile.write("""	Accelerometer:	<select name="config_1">""")
+				self.wfile.write("""			<option value="Default"> Default</option>""")
+				self.wfile.write("""			<option value="Less"> Less Sensitive</option>""")
+				self.wfile.write("""		</select><br />""")
+
+				self.wfile.write("""	Motion Sensor:	<select name="config_2">""")
+				self.wfile.write("""			<option value="Default"> Default</option>""")
+				self.wfile.write("""			<option value="Less"> Less Sensitive</option>""")
+				self.wfile.write("""		</select><br />""")
+
+				self.wfile.write("""	Ambient Sensor:	<select name="config_5">""")
+				self.wfile.write("""			<option value="Default"> Default</option>""")
+				self.wfile.write("""			<option value="Less"> Less Sensitive</option>""")
+				self.wfile.write("""		</select><br />""")
+
+				self.wfile.write("""<input type="submit" name="Go" onclick="redirect()"/>""")
+			else: 
+				self.wfile.write("""<b>-_-</b>""")
+
+			self.wfile.write("""</fieldset><br />""")
+	
+			self.wfile.write("""
+					</form>
+					</body>
+					<a href="http://localhost:8080" > Home </a> <br />
+					<a href="http://localhost:8080/telephone" > Configure Users </a>
+				
+			</html>
+				""" )
 		elif self.path == '/telephone':		
 			self.send_response(200)
 			self.send_header("Content-type", "text/html")
@@ -235,6 +252,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			"""% (alarm_message, user_message))
 
 			rows = sql.arm_status()
+			module_number_iterator = 0
 			if not rows:
 				self.wfile.write("""<br><fieldset>No Modules Detected</fieldset></br>""")
 			for row in rows:
@@ -287,6 +305,9 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			iden = form['iden'].value
 			arm = form['armed'].value
 			sql.arm_module(iden,arm) 
+			configure1 = form1["config_1"].value
+			configure3 = form1["config_3"].value
+			configure5 = form1["config_5"].value
 			self.wfile.write("""<html><head>""")	
 			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080/configure"></head></html>""")	
 		elif self.path == '/telephone':

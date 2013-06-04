@@ -250,6 +250,7 @@ while run == True:
 		size = read_port()
 		parse_rasp_input(size)
 		#print data
+		server_request()
 		
 	except KeyboardInterrupt:
 		run = False

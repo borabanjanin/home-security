@@ -284,14 +284,37 @@ def fetch_table():
 		cur = con.cursor()
 		cur.execute("SELECT * FROM Homesec")
 		rows = cur.fetchall()
-
 		return rows
+
+def insert_config(iden, config1, config3, config5):
+	con = sql.connect(DATABASE)
+	with con:
+		cur = con.cursor()
+		if config1 == "Default":
+			cur.execute("UPDATE Homesec SET sensor1=? WHERE iden=?",("None", iden))
+		elif config1 == "Less":
+			cur.execute("UPDATE Homesec SET sensor1=? WHERE iden=?",("Less", iden))
+		else:
+			print "error inserting configure 1"
+		if config3 == "Default":
+			cur.execute("UPDATE Homesec SET sensor3=? WHERE iden=?",("None", iden))
+		elif config3 == "Less":
+			cur.execute("UPDATE Homesec SET sensor3=? WHERE iden=?",("Less", iden))
+		else:
+			print "error inserting configure 1"
+		if config5 == "Default":
+			cur.execute("UPDATE Homesec SET sensor5=? WHERE iden=?",("None", iden))
+		elif config5 == "Less":
+			cur.execute("UPDATE Homesec SET sensor5=? WHERE iden=?",("Less", iden))
+		else:
+			print "error inserting configure 1"
+		con.commit()
 
 def fetch_idens():
 	con = sql.connect(DATABASE) 
 	with con:
 		cur = con.cursor()
-		cur.execute("SELECT iden FROM Homesec")
+		cur.execute("SELECT iden, slot1, slot2, slot3 FROM Homesec")
 		rows = cur.fetchall()
 		return rows
 
