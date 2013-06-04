@@ -301,13 +301,13 @@ def insert_config(iden, config1, config3, config5):
 		elif config3 == "Less":
 			cur.execute("UPDATE Homesec SET sensor3=? WHERE iden=?",("Less", iden))
 		else:
-			print "error inserting configure 1"
+			print "error inserting configure 3"
 		if config5 == "Default":
 			cur.execute("UPDATE Homesec SET sensor5=? WHERE iden=?",("None", iden))
 		elif config5 == "Less":
 			cur.execute("UPDATE Homesec SET sensor5=? WHERE iden=?",("Less", iden))
 		else:
-			print "error inserting configure 1"
+			print "error inserting configure 5"
 		con.commit()
 
 def fetch_idens():
@@ -347,7 +347,7 @@ def test_database():
 	#print row[1]
 	#print check_iden("0")
 	#create_user_table()
-	user_message()
+	insert_config("1", "Less", "Less", "Less")
 
 
 if __name__ == "__main__":

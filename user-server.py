@@ -136,14 +136,19 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				print "hit"
 				self.wfile.write("""<br><b>No Modules Detected To Configure</b></br>""")
 				self.wfile.write("""<br><b</b></br>""")
+			self.wfile.write("""<br><form method="POST"></br>""")	
 			self.wfile.write("""<fieldset>""")
 			self.wfile.write("""		<legend>System </legend>""")
 			for row in rows:
 				
 				self.wfile.write("""		<select name="iden">""")
-				self.wfile.write("""			<option value="%s"> Module %s</option>"""%(rows[0],rows[0]))
+				self.wfile.write("""			<option value="%s"> Module %s</option>"""%(row[0],row[0]))
 				self.wfile.write("""		</select><br />""")	
-
+				self.wfile.write("""			<select name="armed">
+						<option value="On">Arm Module</option>
+						<option value="Off">Disarm Module</option>
+						</select><br />
+			""")
 			if rows:
 				self.wfile.write("""	Accelerometer:	<select name="config_1">""")
 				self.wfile.write("""			<option value="Default"> Default</option>""")
@@ -305,9 +310,10 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			iden = form['iden'].value
 			arm = form['armed'].value
 			sql.arm_module(iden,arm) 
-			configure1 = form1["config_1"].value
-			configure3 = form1["config_3"].value
-			configure5 = form1["config_5"].value
+			configure1 = form["config_1"].value
+			configure3 = form["config_2"].value
+			configure5 = form["config_5"].value
+			sql.insert_config(iden,configure1,configure3,configure5)
 			self.wfile.write("""<html><head>""")	
 			self.wfile.write("""<meta http-equiv="REFRESH" content="0;url=http://localhost:8080/configure"></head></html>""")	
 		elif self.path == '/telephone':
