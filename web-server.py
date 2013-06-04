@@ -62,7 +62,7 @@ class MyWebHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			print "error in inserting"
 
 		#needs to be altered to allow for scaling
-		if sql.check_iden(post_data['iden']) == 0 && post_data['iden'] != 0:
+		if sql.check_iden(post_data['iden']) == 0:
 			print "created" + post_data['iden']
 			sql.create_module(iden, "Off", alarm, "None", "None", "None", "None", "None", "None", "None", "None", slot1, slot2, slot3)
 		else:
