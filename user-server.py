@@ -144,8 +144,10 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.wfile.write("""		<legend>System </legend>""")
 				
 			self.wfile.write("""		<select name="iden">""")
+			module_number_iterator = 1
 			for row in rows:
-				self.wfile.write("""			<option value="%s"> Module %s</option>"""%(row[0],row[0]))
+				self.wfile.write("""			<option value="%s"> Module %s</option>"""%(row[0],module_number_iterator))
+				module_number_iterator = module_number_iterator + 1
 				
 			self.wfile.write("""		</select><br />""")	
 			self.wfile.write("""			<select name="armed">
@@ -174,10 +176,11 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				self.wfile.write("""<b>-_-</b>""")
 
 			self.wfile.write("""</fieldset><br />""")
-	
+			module_number_iterator = 1	
 			for row in data:
 				self.wfile.write("""<fieldset>""")
-				self.wfile.write("""<legend>Module #  %s Configuration</legend>""" % (row[0]))
+				self.wfile.write("""<legend>Module #  %s Configuration</legend>""" % (module_number_iterator))
+				module_number_iterator = module_number_iterator + 1
 				if row[1] == "Less":
 					self.wfile.write("""Accerometer: %s <br />""" % "Less Sensitive")
 				elif row[1] == "None":
@@ -283,7 +286,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			"""% (alarm_message, user_message))
 
 			rows = sql.arm_status()
-			module_number_iterator = 0
+			module_number_iterator = 1
 			if not rows:
 				self.wfile.write("""<br><fieldset>No Modules Detected</fieldset></br>""")
 			for row in rows:
@@ -295,7 +298,8 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				self.wfile.write("""
 				<p> <fieldset><legend>Module #%s</legend> Status: %s <br />
 					<span class="sensors">Sensor 1: %s <br /> </span>  <span class="sensors">Sensor 2:	%s <br /> </span><span class="sensors">Sensor 3: %s</span>  	</fieldset></p>
-				"""%(row[0],message,row[2],row[3],row[4]))
+				"""%(module_number_iterator,message,row[2],row[3],row[4]))
+				module_number_iterator = module_number_iterator + 1
 			self.wfile.write("""			
 					<form method="POST" action="/">
 						<select name="armed">
