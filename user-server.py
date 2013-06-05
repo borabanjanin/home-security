@@ -36,6 +36,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				<title>CSE 477</title>	
 			</head>
 			
+			<META HTTP-EQUIV="REFRESH" CONTENT="5">
 			<style type="text/css">
 				h1 {
 					text-align: center;
@@ -132,6 +133,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 						<h1>SenseI Hub User Configuration</h1>				
 			""" )
 			rows = sql.fetch_idens()
+			data = sql.arm_status()
 			if not rows:
 				print "hit"
 				self.wfile.write("""<br><b>No Modules Detected To Configure</b></br>""")
@@ -171,6 +173,28 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 			self.wfile.write("""</fieldset><br />""")
 	
+			for row in data:
+				self.wfile.write("""<fieldset>""")
+				self.wfile.write("""<legend>Module #  %1 Configuration</legend>""" % data[0])
+				if data[1] == "Less":
+					self.wfile.write("""Accerometer: %s <br />""" % "Less Sensitive")
+				elif data[1] == "Default":
+					self.wfile.write("""Accerometer: %s <br />""" % data[1])
+				else:
+					print "error with data"
+				if data[2] == "Less":
+					self.wfile.write("""Motion Sensor: %s <br />""" % "Less Sensitive")
+				elif data[2] == "Default":
+					self.wfile.write("""Motion Sensor: %s <br />""" % data[2])
+				else:
+					print "error with data"
+				if data[2] == "Less":
+					self.wfile.write("""Ambient Sensor: %s""" % "Less Sensitive")
+				elif data[2] == "Default":
+					self.wfile.write("""Ambient Sensor: %s""" % data[3])
+				else:
+					print "error with data"
+				self.wfile.write("""</fieldset><br />""")
 			self.wfile.write("""
 					</form>
 					</body>

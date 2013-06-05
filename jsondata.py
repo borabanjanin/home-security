@@ -191,6 +191,15 @@ def arm_status():
 		con.commit()
 		return rows
 
+def configure_status():
+	con = sql.connect('sensor.db')
+	with con:
+		cur = con.cursor()    
+		cur.execute("Select iden,sensor1,sensor3,sensor5 From Homesec;")
+		rows = cur.fetchall()
+		con.commit()
+		return rows
+
 def arm_system_status():
 	con = sql.connect('sensor.db')
 	with con:
