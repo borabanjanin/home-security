@@ -33,10 +33,11 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		<!DOCTYPE html>
 		<html>
 			<head>
-				<title>CSE 477</title>	
+				<title>CSE 477</title>
+				<meta http-equiv="refresh" content="10">
 			</head>
 			
-			<META HTTP-EQUIV="REFRESH" CONTENT="5">
+			
 			<style type="text/css">
 				h1 {
 					text-align: center;
@@ -133,7 +134,7 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 						<h1>SenseI Hub User Configuration</h1>				
 			""" )
 			rows = sql.fetch_idens()
-			data = sql.arm_status()
+			data = sql.configure_status()
 			if not rows:
 				print "hit"
 				self.wfile.write("""<br><b>No Modules Detected To Configure</b></br>""")
@@ -141,29 +142,30 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.wfile.write("""<br><form method="POST"></br>""")	
 			self.wfile.write("""<fieldset>""")
 			self.wfile.write("""		<legend>System </legend>""")
-			for row in rows:
 				
-				self.wfile.write("""		<select name="iden">""")
+			self.wfile.write("""		<select name="iden">""")
+			for row in rows:
 				self.wfile.write("""			<option value="%s"> Module %s</option>"""%(row[0],row[0]))
-				self.wfile.write("""		</select><br />""")	
-				self.wfile.write("""			<select name="armed">
+				
+			self.wfile.write("""		</select><br />""")	
+			self.wfile.write("""			<select name="armed">
 						<option value="On">Arm Module</option>
 						<option value="Off">Disarm Module</option>
 						</select><br />
 			""")
 			if rows:
 				self.wfile.write("""	Accelerometer:	<select name="config_1">""")
-				self.wfile.write("""			<option value="Default"> Default</option>""")
+				self.wfile.write("""			<option value="None"> Default</option>""")
 				self.wfile.write("""			<option value="Less"> Less Sensitive</option>""")
 				self.wfile.write("""		</select><br />""")
 
 				self.wfile.write("""	Motion Sensor:	<select name="config_2">""")
-				self.wfile.write("""			<option value="Default"> Default</option>""")
+				self.wfile.write("""			<option value="None"> Default</option>""")
 				self.wfile.write("""			<option value="Less"> Less Sensitive</option>""")
 				self.wfile.write("""		</select><br />""")
 
 				self.wfile.write("""	Ambient Sensor:	<select name="config_5">""")
-				self.wfile.write("""			<option value="Default"> Default</option>""")
+				self.wfile.write("""			<option value="None"> Default</option>""")
 				self.wfile.write("""			<option value="Less"> Less Sensitive</option>""")
 				self.wfile.write("""		</select><br />""")
 
@@ -175,23 +177,23 @@ class MyHTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	
 			for row in data:
 				self.wfile.write("""<fieldset>""")
-				self.wfile.write("""<legend>Module #  %1 Configuration</legend>""" % data[0])
-				if data[1] == "Less":
+				self.wfile.write("""<legend>Module #  %s Configuration</legend>""" % (row[0]))
+				if row[1] == "Less":
 					self.wfile.write("""Accerometer: %s <br />""" % "Less Sensitive")
-				elif data[1] == "Default":
-					self.wfile.write("""Accerometer: %s <br />""" % data[1])
+				elif row[1] == "None":
+					self.wfile.write("""Accerometer: %s <br />""" % "Default")
 				else:
-					print "error with data"
-				if data[2] == "Less":
+					print "error with data"	
+				if row[2] == "Less":
 					self.wfile.write("""Motion Sensor: %s <br />""" % "Less Sensitive")
-				elif data[2] == "Default":
-					self.wfile.write("""Motion Sensor: %s <br />""" % data[2])
+				elif row[2] == "None":
+					self.wfile.write("""Motion Sensor: %s <br />""" % "Default")
 				else:
 					print "error with data"
-				if data[2] == "Less":
+				if row[2] == "Less":
 					self.wfile.write("""Ambient Sensor: %s""" % "Less Sensitive")
-				elif data[2] == "Default":
-					self.wfile.write("""Ambient Sensor: %s""" % data[3])
+				elif row[2] == "None":
+					self.wfile.write("""Ambient Sensor: %s""" % "Default")
 				else:
 					print "error with data"
 				self.wfile.write("""</fieldset><br />""")
